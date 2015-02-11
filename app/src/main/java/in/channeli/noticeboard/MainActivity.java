@@ -1,20 +1,27 @@
 package in.channeli.noticeboard;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.graphics.Outline;
+import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import adapters.CustomListAdapter;
+import connections.Connections;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -26,12 +33,35 @@ public class MainActivity extends ActionBarActivity {
     private ListView mDrawerList;
 
     @Override
+    @TargetApi(21)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        int i[] = new int[]{1,2,3,4,5};
-        String s[] = new String[]{"q","w","e","r","t","y"};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            setContentView(R.layout.activity_main_lollipop);
+            View addButton = findViewById(R.id.refresh_button);
+            ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    int diameter = getResources().getDimensionPixelSize(R.dimen.round_button_diameter);
+                    outline.setOval(0, 0, diameter, diameter);
+                }
+            };
+            addButton.setOutlineProvider(viewOutlineProvider);
+            //addButton.setClipToOutline(true);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+        }
+        else{
+            setContentView(R.layout.activity_main);
+        }
+
+        int i[] = new int[]{1, 2, 3, 4, 5};
+        String s[] = new String[]{"q", "w", "e", "r", "t", "y"};
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -47,6 +77,11 @@ public class MainActivity extends ActionBarActivity {
 
         mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, s));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        Connections con = new Connections();
+        String result = con.getData("https://channeli.in/notices/");
+
+
     }
 
 
