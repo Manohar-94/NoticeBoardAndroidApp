@@ -10,18 +10,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import adapters.CustomDrawerListAdapter;
 import adapters.CustomListAdapter;
 import connections.Connections;
+import objects_and_parsing.Categories;
+import objects_and_parsing.Parsing;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -60,8 +62,14 @@ public class MainActivity extends ActionBarActivity {
             setContentView(R.layout.activity_main);
         }
 
+        Connections con = new Connections();
+        String constants = con.getData("https://channeli.in/notices/");
+
+        Parsing parsing = new Parsing();
+        ArrayList<Categories> categories;
+        categories = parsing.parse_constants(constants);
+
         int i[] = new int[]{1, 2, 3, 4, 5};
-        String s[] = new String[]{"q", "w", "e", "r", "t", "y"};
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -75,12 +83,9 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, s));
+        mDrawerList.setAdapter(new CustomDrawerListAdapter(this,
+                R.layout.drawerlist_itemview, categories));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        Connections con = new Connections();
-        String result = con.getData("https://channeli.in/notices/");
-
 
     }
 
