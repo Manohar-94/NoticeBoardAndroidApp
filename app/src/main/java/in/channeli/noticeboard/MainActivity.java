@@ -3,6 +3,7 @@ package in.channeli.noticeboard;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
@@ -17,29 +18,37 @@ import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.apache.http.client.methods.HttpGet;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import adapters.CustomDrawerListAdapter;
 import adapters.CustomListAdapter;
+import connections.ConnectTaskHttpGet;
 import connections.Connections;
 import objects_and_parsing.Categories;
+import objects_and_parsing.NoticeObject;
 import objects_and_parsing.Parsing;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private CustomListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+
+    HttpGet httpPost1,httpPost2;
 
     @Override
     @TargetApi(21)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             setContentView(R.layout.activity_main_lollipop);
             View addButton = findViewById(R.id.refresh_button);
             ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
@@ -57,28 +66,58 @@ public class MainActivity extends ActionBarActivity {
 
                 }
             });
-        }
-        else{
+        } else {
             setContentView(R.layout.activity_main);
+        }*/
+
+        final Connections con = new Connections();
+
+        httpPost1 = new HttpGet("http://172.25.55.156:8000/notices/get_constants/");
+        httpPost2 = new HttpGet("http://172.25.55.156:8000/notices/content_first_time_notices1/1");
+        String constants = null;
+        String content_first_time_notice = null;
+        try {
+            constants = new ConnectTaskHttpGet().execute(httpPost1).get();
+            content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost2).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
 
-        Connections con = new Connections();
-        String constants = con.getData("https://channeli.in/notices/");
+        //String constants = con.getData("http://172.25.55.156:8000/notices/get_constants/");
+        //String content_first_time_notice = con.getData("http://172.25.55.156:8000/notices/content_first_time_notices1/1/");
+        final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
 
-        Parsing parsing = new Parsing();
+        final Parsing parsing = new Parsing();
         ArrayList<Categories> categories;
         categories = parsing.parse_constants(constants);
+        final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
 
-        int i[] = new int[]{1, 2, 3, 4, 5};
-
+        //recyclerView initialization
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CustomListAdapter(i);
+        mAdapter = new CustomListAdapter(noticelist);
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.SetOnItemClickListener(new CustomListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(notice_info+noticelist.get(position).getId());
+                String url = stringBuilder.toString();
+                String result = con.getData(url);
+                Intent intent = new Intent(getApplicationContext(), NoticeFragment.class);
+                intent.putExtra("noticeinfo", result);
+                startActivity(intent);
+                //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
+            }
+        });
+
+        mRecyclerView.setOnScrollListener(new RecyclerScrollListener());
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -112,13 +151,13 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener{
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
 
-        private void selectItem(int position){
+        private void selectItem(int position) {
             Fragment fragment = new NoticeFragment();
             Bundle args = new Bundle();
             args.putInt(NoticeFragment.NOTICE_NUMBER, position);
@@ -129,6 +168,16 @@ public class MainActivity extends ActionBarActivity {
                     .replace(R.id.content_frame, fragment)
                     .commit();
 
+
+        }
+    }
+
+    private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+
+        }
+
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy){
 
         }
     }

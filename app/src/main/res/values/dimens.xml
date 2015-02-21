@@ -7,4 +7,5 @@
     <dimen name="elevation_low">1dp</dimen>
     <dimen name="elevation_high">4dp</dimen>
     <dimen name="list_margin_top">10dp</dimen>
+    <dimen name="list_margin_left">20dp</dimen>
 </resources>

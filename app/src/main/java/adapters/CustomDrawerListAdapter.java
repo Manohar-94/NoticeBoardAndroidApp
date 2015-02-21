@@ -1,6 +1,7 @@
 package adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Categories> {
         View drawerlist_view = inflater.inflate(R.layout.drawerlist_itemview, null);
         TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
         textView.setText(categories.get(position).main_category);
+        //Log.e("inside drawer adapter", categories.get(position).main_category);
         return drawerlist_view;
     }
 }

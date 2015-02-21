@@ -17,7 +17,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class ConnectTask extends AsyncTask<HttpPost, Void, String> {
+public class ConnectTaskHttpPost extends AsyncTask<HttpPost, Void, String> {
     @Override
     protected String doInBackground(HttpPost... httpPosts) {
 // TODO Auto-generated method stub

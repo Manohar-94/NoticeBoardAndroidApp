@@ -21,4 +21,6 @@ public class NoticeObject {
         this.main_category=main_category;
     }
 
+    public String getSubject(){return this.subject;}
+    public int getId(){return this.id;}
 }
