@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,9 @@ public class MainActivity extends ActionBarActivity {
     private ListView mDrawerList;
 
     HttpGet httpPost1,httpPost2;
+
+    ArrayList<Categories> categories;
+
 
     @Override
     @TargetApi(21)
@@ -90,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
         final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
 
         final Parsing parsing = new Parsing();
-        ArrayList<Categories> categories;
+
         categories = parsing.parse_constants(constants);
         final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
 
@@ -110,7 +114,7 @@ public class MainActivity extends ActionBarActivity {
                 stringBuilder.append(notice_info+noticelist.get(position).getId());
                 String url = stringBuilder.toString();
                 String result = con.getData(url);
-                Intent intent = new Intent(getApplicationContext(), NoticeFragment.class);
+                Intent intent = new Intent(getApplicationContext(), Notice.class);
                 intent.putExtra("noticeinfo", result);
                 startActivity(intent);
                 //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
@@ -156,8 +160,9 @@ public class MainActivity extends ActionBarActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
+    }
 
-        private void selectItem(int position) {
+    private void selectItem(int position) {
             Fragment fragment = new NoticeFragment();
             Bundle args = new Bundle();
             args.putInt(NoticeFragment.NOTICE_NUMBER, position);
@@ -167,10 +172,24 @@ public class MainActivity extends ActionBarActivity {
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame, fragment)
                     .commit();
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            mDrawerList.setItemChecked(position,true);
+            setTitle(categories.get(position).main_category);
+            Log.e("main_category",categories.get(position).main_category);
+            mDrawerLayout.closeDrawer(mDrawerList);
 
+    }
 
+    public void setTitle(String title){
+        try {
+            getSupportActionBar().setTitle(title);
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
     }
+
+
 
     private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
         public void onScrollStateChanged(RecyclerView recyclerView, int newState){
