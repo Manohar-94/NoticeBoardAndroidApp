@@ -4,18 +4,14 @@ import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.Outline;
-import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -35,13 +31,13 @@ import objects_and_parsing.Parsing;
 
 public class MainActivity extends ActionBarActivity {
 
-    private RecyclerView mRecyclerView;
+    /*private RecyclerView mRecyclerView;
     private CustomListAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;*/
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
-    HttpGet httpPost1,httpPost2;
+    HttpGet httpPost1;
 
     ArrayList<Categories> categories;
 
@@ -74,15 +70,24 @@ public class MainActivity extends ActionBarActivity {
             setContentView(R.layout.activity_main);
         }*/
 
-        final Connections con = new Connections();
+        Fragment fragment = new DrawerClickFragment();
+        Bundle args = new Bundle();
+        args.putString("category","all");
+        fragment.setArguments(args);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+
+        //final Connections con = new Connections();
 
         httpPost1 = new HttpGet("http://172.25.55.156:8000/notices/get_constants/");
-        httpPost2 = new HttpGet("http://172.25.55.156:8000/notices/content_first_time_notices1/1");
+        //httpPost2 = new HttpGet("http://172.25.55.156:8000/notices/content_first_time_notices1/1");
         String constants = null;
-        String content_first_time_notice = null;
+        //String content_first_time_notice = null;
         try {
             constants = new ConnectTaskHttpGet().execute(httpPost1).get();
-            content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost2).get();
+            //content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost2).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -91,21 +96,21 @@ public class MainActivity extends ActionBarActivity {
 
         //String constants = con.getData("http://172.25.55.156:8000/notices/get_constants/");
         //String content_first_time_notice = con.getData("http://172.25.55.156:8000/notices/content_first_time_notices1/1/");
-        final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
+        //final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
 
         final Parsing parsing = new Parsing();
 
         categories = parsing.parse_constants(constants);
-        final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
+        //final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
 
         //recyclerView initialization
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        //mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        //mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        /*mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);*/
 
-        mAdapter = new CustomListAdapter(noticelist);
+        /*mAdapter = new CustomListAdapter(noticelist);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.SetOnItemClickListener(new CustomListAdapter.OnItemClickListener() {
             @Override
@@ -121,7 +126,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        mRecyclerView.setOnScrollListener(new RecyclerScrollListener());
+        mRecyclerView.setOnScrollListener(new RecyclerScrollListener());*/
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -163,19 +168,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void selectItem(int position) {
-            Fragment fragment = new NoticeFragment();
+            Fragment fragment = new DrawerClickFragment();
             Bundle args = new Bundle();
-            args.putInt(NoticeFragment.NOTICE_NUMBER, position);
+            args.putString("category",categories.get(position).main_category);
             fragment.setArguments(args);
 
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame, fragment)
                     .commit();
-            mRecyclerView.setVisibility(View.INVISIBLE);
+            //mRecyclerView.setVisibility(View.INVISIBLE);
             mDrawerList.setItemChecked(position,true);
             setTitle(categories.get(position).main_category);
-            Log.e("main_category",categories.get(position).main_category);
             mDrawerLayout.closeDrawer(mDrawerList);
 
     }
@@ -191,7 +195,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-    private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
+    /*private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
         public void onScrollStateChanged(RecyclerView recyclerView, int newState){
 
         }
@@ -199,5 +203,5 @@ public class MainActivity extends ActionBarActivity {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy){
 
         }
-    }
+    }*/
 }
