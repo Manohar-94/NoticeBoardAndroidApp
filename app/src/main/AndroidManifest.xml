@@ -18,13 +18,21 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="NoticeBoard">
+            android:label="@string/app_name">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".Notice"
             android:label="NoticeBoard">
 
             </activity>
+        <activity
+            android:name=".SearchResultsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

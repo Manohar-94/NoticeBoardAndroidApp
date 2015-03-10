@@ -3,17 +3,22 @@ package in.channeli.noticeboard;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import org.apache.http.client.methods.HttpGet;
 
@@ -31,9 +36,6 @@ import objects_and_parsing.Parsing;
 
 public class MainActivity extends ActionBarActivity {
 
-    /*private RecyclerView mRecyclerView;
-    private CustomListAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;*/
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
@@ -48,85 +50,21 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            setContentView(R.layout.activity_main_lollipop);
-            View addButton = findViewById(R.id.refresh_button);
-            ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    int diameter = getResources().getDimensionPixelSize(R.dimen.round_button_diameter);
-                    outline.setOval(0, 0, diameter, diameter);
-                }
-            };
-            addButton.setOutlineProvider(viewOutlineProvider);
-            //addButton.setClipToOutline(true);
-            addButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
-        } else {
-            setContentView(R.layout.activity_main);
-        }*/
-
-        Fragment fragment = new DrawerClickFragment();
-        Bundle args = new Bundle();
-        args.putString("category","all");
-        fragment.setArguments(args);
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
-
-        //final Connections con = new Connections();
-
         httpPost1 = new HttpGet("http://172.25.55.156:8000/notices/get_constants/");
-        //httpPost2 = new HttpGet("http://172.25.55.156:8000/notices/content_first_time_notices1/1");
         String constants = null;
-        //String content_first_time_notice = null;
         try {
             constants = new ConnectTaskHttpGet().execute(httpPost1).get();
-            //content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost2).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        //String constants = con.getData("http://172.25.55.156:8000/notices/get_constants/");
-        //String content_first_time_notice = con.getData("http://172.25.55.156:8000/notices/content_first_time_notices1/1/");
-        //final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
+        changingFragment("all");
 
         final Parsing parsing = new Parsing();
 
         categories = parsing.parse_constants(constants);
-        //final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
-
-        //recyclerView initialization
-        //mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        //mRecyclerView.setHasFixedSize(true);
-
-        /*mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);*/
-
-        /*mAdapter = new CustomListAdapter(noticelist);
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.SetOnItemClickListener(new CustomListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(notice_info+noticelist.get(position).getId());
-                String url = stringBuilder.toString();
-                String result = con.getData(url);
-                Intent intent = new Intent(getApplicationContext(), Notice.class);
-                intent.putExtra("noticeinfo", result);
-                startActivity(intent);
-                //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
-            }
-        });
-
-        mRecyclerView.setOnScrollListener(new RecyclerScrollListener());*/
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -137,11 +75,29 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    void changingFragment(String category){
+        Fragment fragment = new DrawerClickFragment();
+        Bundle args = new Bundle();
+        args.putString("category",category);
+        fragment.setArguments(args);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        if(null != searchView){
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(
+                    new ComponentName(this, SearchResultsActivity.class)));
+            searchView.setIconified(false);
+        }
         return true;
     }
 
@@ -168,16 +124,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void selectItem(int position) {
-            Fragment fragment = new DrawerClickFragment();
-            Bundle args = new Bundle();
-            args.putString("category",categories.get(position).main_category);
-            fragment.setArguments(args);
-
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .commit();
-            //mRecyclerView.setVisibility(View.INVISIBLE);
+            changingFragment(categories.get(position).main_category);
             mDrawerList.setItemChecked(position,true);
             setTitle(categories.get(position).main_category);
             mDrawerLayout.closeDrawer(mDrawerList);
@@ -192,16 +139,4 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
     }
-
-
-
-    /*private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-
-        }
-
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-
-        }
-    }*/
 }

@@ -21,10 +21,12 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView mTextView;
+        public TextView subject;
+        public TextView category;
         public ViewHolder(View mRecyclerView) {
             super(mRecyclerView);
-            mTextView = (TextView) mRecyclerView.findViewById(R.id.recycler_list_text);
+            subject = (TextView) mRecyclerView.findViewById(R.id.recycler_list_subject);
+            category = (TextView) mRecyclerView.findViewById(R.id.recycler_list_category);
             mRecyclerView.setOnClickListener(this);
         }
 
@@ -58,7 +60,8 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.Vi
 
     public void onBindViewHolder(ViewHolder holder, int position){
 
-        holder.mTextView.setText(noticelist.get(position).getSubject());
+        holder.subject.setText(noticelist.get(position).getSubject());
+        holder.category.setText(noticelist.get(position).getCategory());
     }
 
     @Override

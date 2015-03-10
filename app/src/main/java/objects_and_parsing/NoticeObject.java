@@ -23,4 +23,5 @@ public class NoticeObject {
 
     public String getSubject(){return this.subject;}
     public int getId(){return this.id;}
+    public String getCategory(){return this.category;}
 }

@@ -22,4 +22,5 @@ public class NoticeInfo {
         this.content=content;
         this.datetime_modified=datetime_modified;
     }
+    public String getSubject(){return subject;}
 }

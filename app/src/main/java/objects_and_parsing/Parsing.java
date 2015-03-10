@@ -42,9 +42,10 @@ public class Parsing {
         noticeslist = new ArrayList<>();
         try{
             jsonArray = new JSONArray(notices);
-            notice = new NoticeObject();
+
             for(int i=0;i< jsonArray.length();i++){
                 jsonObject2 = jsonArray.getJSONObject(i);
+                notice = new NoticeObject();
                 notice.id = jsonObject2.getInt("id");
                 notice.subject = jsonObject2.getString("subject");
                 notice.datetime_modified = jsonObject2.getString("datetime_modified");
