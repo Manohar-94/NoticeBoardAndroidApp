@@ -27,7 +27,8 @@
             android:label="NoticeBoard">
             </activity>
         <activity
-            android:name=".SearchResultsActivity">
+            android:name=".SearchResultsActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
