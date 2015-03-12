@@ -6,11 +6,17 @@
     <item android:id="@+id/search"
         android:title="Search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="collapseActionView|ifRoom"
-        android:actionViewClass="android.support.v7.widget.SearchView"/>
+        app:showAsAction="collapseActionView|always"
+        app:actionViewClass="android.widget.SearchView"/>
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item android:id="@+id/logout"
+        android:title="Logout"
+        app:showAsAction="never" />
+
+
 </menu>

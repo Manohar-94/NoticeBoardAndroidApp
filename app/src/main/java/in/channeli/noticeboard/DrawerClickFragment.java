@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +37,10 @@ public class DrawerClickFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private CustomListAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    Connections con;
+    Parsing parsing;
+    final String noticeurl = "http://172.25.55.156:8000/notices/get_notice/";
 
     @TargetApi(21)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,33 +79,23 @@ public class DrawerClickFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        final Connections con = new Connections();
-        Parsing parsing = new Parsing();
-        final ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
+        con = new Connections();
+        parsing = new Parsing();
+        ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
         Log.e("...",noticelist.get(0).getSubject());
         Log.e("...",noticelist.get(1).getSubject());
-        final String notice_info = "http://172.25.55.156:8000/notices/get_notice/";
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new CustomListAdapter(noticelist);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.SetOnItemClickListener(new CustomListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(notice_info+noticelist.get(position).getId());
-                String url = stringBuilder.toString();
-                String result = con.getData(url);
-                Intent intent = new Intent(getActivity(), Notice.class);
-                intent.putExtra("noticeinfo", result);
-                startActivity(intent);
-                //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
-            }
-        });
+        mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
         mLayoutManager = new GridLayoutManager(getActivity(),1);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         mRecyclerView.setOnScrollListener(new RecyclerScrollListener());
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());//mAdapter, mRecyclerView));
         return view;
     }
 
@@ -132,4 +128,59 @@ public class DrawerClickFragment extends Fragment {
         }
     }
 
+    private class RecyclerListListener implements CustomListAdapter.OnItemClickListener {
+        ArrayList<NoticeObject> noticelist;
+        public RecyclerListListener(ArrayList<NoticeObject> noticelist){
+            this.noticelist = noticelist;
+        }
+        @Override
+        public void onItemClick(View view, int position) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(noticeurl+noticelist.get(position).getId());
+            String url = stringBuilder.toString();
+            httpPost = new HttpGet(url);
+            String result = null;
+            try {
+                result = new ConnectTaskHttpGet().execute(httpPost).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            Intent intent = new Intent(getActivity(), Notice.class);
+            intent.putExtra("noticeinfo", result);
+            startActivity(intent);
+            //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
+        }
+    }
+
+    private class SwipeRefreshListener implements SwipeRefreshLayout.OnRefreshListener{
+        /*CustomListAdapter mAdapter;
+        RecyclerView recyclerView;*/
+        /*public SwipeRefreshListener(CustomListAdapter mAdapter, RecyclerView recyclerView){
+            this.mAdapter = mAdapter;
+            this.recyclerView = recyclerView;
+        }*/
+        @Override
+        public void onRefresh() {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String result=null;
+                    try {
+                        result = new ConnectTaskHttpGet().execute(httpPost).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    ArrayList<NoticeObject> noticelist = parsing.parseNotices(result);
+                    mAdapter = new CustomListAdapter(noticelist);
+                    mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            },5000);
+
+        }
+    }
 }

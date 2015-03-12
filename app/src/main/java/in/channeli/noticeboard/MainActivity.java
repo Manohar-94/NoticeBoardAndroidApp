@@ -93,11 +93,11 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        if(null != searchView){
+        //if(null != searchView){
             searchView.setSearchableInfo(searchManager.getSearchableInfo(
-                    new ComponentName(this, SearchResultsActivity.class)));
+            new ComponentName(this, SearchResultsActivity.class)));
             searchView.setIconified(false);
-        }
+        //}
         return true;
     }
 

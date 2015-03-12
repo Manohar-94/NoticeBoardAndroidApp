@@ -12,7 +12,7 @@ public class SearchResultsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //setContentView();
+        setContentView(R.layout.search);
         handleIntent(getIntent());
     }
     @Override
