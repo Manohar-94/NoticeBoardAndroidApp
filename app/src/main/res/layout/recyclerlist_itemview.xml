@@ -6,14 +6,26 @@
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <TextView
-        android:id="@+id/recycler_list_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:layout_marginTop="@dimen/list_margin_top"/>
+        android:textSize="15sp"
+        android:id="@+id/recycler_list_category"/>
+
     <TextView
+        android:id="@+id/recycler_list_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recycler_list_category"
-        android:layout_below="@id/recycler_list_subject"/>
+        android:textSize="25sp"
+        android:layout_marginTop="@dimen/list_margin_top"
+        android:layout_below="@id/recycler_list_category"/>
+
+    <TextView
+        android:id="@+id/recycler_list_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:layout_below="@id/recycler_list_subject"
+        android:layout_alignParentRight="true"/>
+
 </RelativeLayout>

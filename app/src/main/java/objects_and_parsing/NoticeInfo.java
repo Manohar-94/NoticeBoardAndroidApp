@@ -23,4 +23,6 @@ public class NoticeInfo {
         this.datetime_modified=datetime_modified;
     }
     public String getSubject(){return subject;}
+    public String getCategory(){return category;}
+    public String getDatetime_modified(){return datetime_modified;}
 }

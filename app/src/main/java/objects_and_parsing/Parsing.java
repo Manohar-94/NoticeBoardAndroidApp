@@ -16,6 +16,7 @@ public class Parsing {
     JSONArray jsonArray;
     ArrayList<Categories> categorieslist;
     ArrayList<NoticeObject> noticeslist;
+    ArrayList<NoticeInfo> noticeInfoList;
     Categories categories;
     NoticeObject notice;
     NoticeInfo noticeInfo;
@@ -59,6 +60,29 @@ public class Parsing {
             e.printStackTrace();
         }
         return noticeslist;
+    }
+
+    public ArrayList<NoticeInfo> parseSearchedNotices(String result){
+        noticeInfoList = new ArrayList<>();
+        try {
+            Log.e("inside parseSearchedNotices",result);
+            jsonArray = new JSONArray(result);
+            for(int i=0;i<jsonArray.length();i++){
+                jsonObject = jsonArray.getJSONObject(i);
+                noticeInfo = parseNoticeInfo(jsonObject.toString());/*new NoticeInfo();
+                noticeInfo.id = jsonObject.getInt("id");
+                noticeInfo.reference = jsonObject.getString("reference");
+                noticeInfo.subject = jsonObject.getString("subject");
+                noticeInfo.username = jsonObject.getString("username");
+                noticeInfo.category = jsonObject.getString("category");
+                noticeInfo.content = jsonObject.getString("content");
+                noticeInfo.datetime_modified = jsonObject.getString("datetime_modified");*/
+                noticeInfoList.add(noticeInfo);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return noticeInfoList;
     }
 
     public NoticeInfo parseNoticeInfo(String noticeinfo){
