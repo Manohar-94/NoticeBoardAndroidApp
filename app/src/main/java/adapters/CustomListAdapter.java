@@ -69,4 +69,8 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.Vi
         return noticelist.size();
     }
 
+    public void setData(ArrayList<NoticeObject> noticelist){
+        this.noticelist = noticelist;
+    }
+
 }

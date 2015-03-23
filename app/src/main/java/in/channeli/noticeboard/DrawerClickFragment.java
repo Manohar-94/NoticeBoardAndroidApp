@@ -85,7 +85,8 @@ public class DrawerClickFragment extends Fragment {
         Log.e("...",noticelist.get(0).getSubject());
         Log.e("...",noticelist.get(1).getSubject());
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        final RecyclerView rv = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        mRecyclerView = rv;
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new CustomListAdapter(noticelist);
         mRecyclerView.setAdapter(mAdapter);
@@ -175,8 +176,9 @@ public class DrawerClickFragment extends Fragment {
                         e.printStackTrace();
                     }
                     ArrayList<NoticeObject> noticelist = parsing.parseNotices(result);
-                    mAdapter = new CustomListAdapter(noticelist);
+                    mAdapter.setData(noticelist);
                     mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
+                    mRecyclerView.setAdapter(mAdapter);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             },5000);
