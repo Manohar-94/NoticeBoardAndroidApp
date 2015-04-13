@@ -3,6 +3,7 @@ package in.channeli.noticeboard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,9 +21,7 @@ public class Notice extends ActionBarActivity {
         setContentView(R.layout.notice);
         Intent intent = getIntent();
         String result = intent.getStringExtra("noticeinfo");
-        Parsing parsing = new Parsing();
-        NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
         TextView textView = (TextView) findViewById(R.id.TextViewForTemp);
-        textView.setText(noticeInfo.getSubject());
+        textView.setText(Html.fromHtml(result));
     }
 }

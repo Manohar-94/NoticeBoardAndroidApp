@@ -8,9 +8,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -46,6 +48,9 @@ public class MainActivity extends ActionBarActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    public static String UrlOfNotice = "http://172.25.55.156/notices/";
+    public static String UrlOfLogin = "http://172.25.55.156:8080/peoplesearch/";
+    private ActionBarDrawerToggle mDrawerToggle;
 
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -59,9 +64,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        httpPost1 = new HttpGet("http://172.25.55.156:8000/notices/get_constants/");
+        httpPost1 = new HttpGet(UrlOfNotice+"get_constants/");
         String constants = null;
         try {
             constants = new ConnectTaskHttpGet().execute(httpPost1).get();
@@ -72,6 +75,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         changingFragment("all");
+        getSupportActionBar().setIcon(R.drawable.ic_drawer);
 
         parsing = new Parsing();
 
@@ -80,10 +84,44 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                //R.drawable.ic_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ){
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                //getActionBar().setTitle("NoticeBoard");
+            }
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                //getActionBar().setTitle(mDrawerTitle);
+            }
+        };
+
         mDrawerList.setAdapter(new CustomDrawerListAdapter(this,
                 R.layout.drawerlist_itemview, categories));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     void changingFragment(String category){
@@ -119,14 +157,20 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+        SharedPreferences.Editor editor = settings.edit();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.profile) {
+            Intent intent = new Intent(this, Profile.class);
+            startActivity(intent);
+            return true;
+        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         else if(id == R.id.logout){
             HttpPost httpPost = new HttpPost(
-                    "http://172.25.55.156:8000/peoplesearch/index/logout/");
+                    UrlOfLogin+"logout/");
             session_key = settings.getString("session_key", "");
             List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
             namevaluepair.add(new BasicNameValuePair("session_key",session_key));
@@ -141,7 +185,7 @@ public class MainActivity extends ActionBarActivity {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "logged out successfully" , Toast.LENGTH_SHORT);
                     toast.show();
-                    SharedPreferences.Editor editor = settings.edit();
+
                     editor.putString("session_key","");
                     editor.commit();
                     finish();
@@ -179,4 +223,9 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
     }
+
+   /* @Override
+    public boolean onSearchRequested(){
+        return super.onSearchRequested();
+    }*/
 }

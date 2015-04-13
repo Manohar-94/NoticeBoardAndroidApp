@@ -35,12 +35,14 @@ public class SearchResultsActivity extends ActionBarActivity {
     ArrayList<NoticeInfo> noticelist;
     CustomSearchAdapter customSearchAdapter;
     ListView listView;
+    final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
+    HttpGet httpPost;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
         parsing = new Parsing();
-        searchUrl = "http://172.25.55.156:8000/notices/search/new/All/All/?q=";
+        searchUrl = MainActivity.UrlOfNotice+"search/new/All/All/?q=";
         handleIntent(getIntent());
         String url = searchUrl+query;
         Log.e("url sent for searching",url);
@@ -128,6 +130,9 @@ public class SearchResultsActivity extends ActionBarActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            Intent intent = new Intent(getApplicationContext(), Notice.class);
+            intent.putExtra("noticeinfo", noticelist.get(position).getContent());
+            startActivity(intent);
         }
     }
 }

@@ -25,4 +25,5 @@ public class NoticeInfo {
     public String getSubject(){return subject;}
     public String getCategory(){return category;}
     public String getDatetime_modified(){return datetime_modified;}
+    public String getContent(){return content;}
 }

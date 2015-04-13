@@ -103,7 +103,7 @@ public class SplashScreen extends Activity{
     public void yesSessionKey(){
         try{
             //httpClient = new DefaultHttpClient();
-            httpPost = new HttpPost("http://172.25.55.156:8000/peoplesearch/check_session/");
+            httpPost = new HttpPost(MainActivity.UrlOfLogin+"check_session/");
             List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
             namevaluepair.add(new BasicNameValuePair("session_key",session_key));
             httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
@@ -133,7 +133,7 @@ public class SplashScreen extends Activity{
         username = usertext.getText().toString();
         password = passtext.getText().toString();
         //httpClient = new DefaultHttpClient();
-        httpPost = new HttpPost("http://172.25.55.156:8000/peoplesearch/channeli_login/");
+        httpPost = new HttpPost(MainActivity.UrlOfLogin+"channeli_login/");
         List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(2);
         namevaluepair.add(new BasicNameValuePair("username",username));
         namevaluepair.add(new BasicNameValuePair("password",password));
@@ -165,6 +165,7 @@ public class SplashScreen extends Activity{
     }
     public void parseData(){
         try {
+            Log.e("jsonobject",result);
             JSONObject json = new JSONObject(result);
             msg = json.getString("msg");
             name = json.getString("_name");

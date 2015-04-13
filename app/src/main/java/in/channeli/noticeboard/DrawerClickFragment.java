@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import adapters.CustomListAdapter;
 import connections.ConnectTaskHttpGet;
 import connections.Connections;
+import objects_and_parsing.NoticeInfo;
 import objects_and_parsing.NoticeObject;
 import objects_and_parsing.Parsing;
 
@@ -40,7 +41,7 @@ public class DrawerClickFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     Connections con;
     Parsing parsing;
-    final String noticeurl = "http://172.25.55.156:8000/notices/get_notice/";
+    final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
 
     @TargetApi(21)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +71,7 @@ public class DrawerClickFragment extends Fragment {
         }
         Bundle args = getArguments();
         String category = args.getString("category","All");
-        httpPost = new HttpGet("http://172.25.55.156:8000/notices/content_first_time_notices1/1");
+        httpPost = new HttpGet(MainActivity.UrlOfNotice+"content_first_time_notices1/1");
         String content_first_time_notice = null;
         try {
             content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost).get();
@@ -148,8 +149,9 @@ public class DrawerClickFragment extends Fragment {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
+            NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
             Intent intent = new Intent(getActivity(), Notice.class);
-            intent.putExtra("noticeinfo", result);
+            intent.putExtra("noticeinfo", noticeInfo.getContent());
             startActivity(intent);
             //NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
         }
