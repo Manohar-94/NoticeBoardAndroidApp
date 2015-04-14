@@ -37,14 +37,8 @@ public class Profile extends Activity {
         StringBuilder stringBuilder = new StringBuilder(imageurl+enrollment_no+"/");
         imageurl = stringBuilder.toString();
         try{
-            public void loadBitmap(int resId, ImageView imageView) {
-                BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-                task.execute(resId);
-            }
-            /*String biToString = new ProfilePicDisplay().execute(imageurl).get();
-            Bitmap bitmap = getBitMapFromString(biToString);
-            imageView.setImageBitmap(bitmap);*/
-
+            Bitmap bitmap = new ProfilePicDisplay().execute(imageurl).get();
+            imageView.setImageBitmap(bitmap);
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -53,9 +47,5 @@ public class Profile extends Activity {
         }
 
     }
-    public static Bitmap getBitMapFromString(String src){
-        Log.i("b=", "" + src.getBytes().length);//returns 12111 as a length.
-        return BitmapFactory.decodeByteArray(src.getBytes(),0,src.getBytes
-                    ().length);
-    }
+
 }

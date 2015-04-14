@@ -65,7 +65,7 @@ public class Parsing {
     public ArrayList<NoticeInfo> parseSearchedNotices(String result){
         noticeInfoList = new ArrayList<>();
         try {
-            Log.e("inside parseSearchedNotices",result);
+
             jsonArray = new JSONArray(result);
             for(int i=0;i<jsonArray.length();i++){
                 jsonObject = jsonArray.getJSONObject(i);

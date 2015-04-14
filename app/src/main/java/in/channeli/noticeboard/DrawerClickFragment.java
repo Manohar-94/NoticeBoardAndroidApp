@@ -42,12 +42,14 @@ public class DrawerClickFragment extends Fragment {
     Connections con;
     Parsing parsing;
     final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
+    String category;
+    ArrayList<NoticeObject> noticelist;
 
     @TargetApi(21)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             view = inflater.inflate(R.layout.recycler_view_lollipop, container, false);
             View refreshButton = view.findViewById(R.id.refresh_button);
             ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
@@ -66,12 +68,12 @@ public class DrawerClickFragment extends Fragment {
                 }
             });
         }
-        else {
+        else {*/
             view = inflater.inflate(R.layout.recycler_view, container, false);
-        }
+        //}
         Bundle args = getArguments();
-        String category = args.getString("category","All");
-        httpPost = new HttpGet(MainActivity.UrlOfNotice+"content_first_time_notices1/1");
+        category = args.getString("category","All");
+        httpPost = new HttpGet(MainActivity.UrlOfNotice+"list_notices/new/"+category+"/All/1/20/0");
         String content_first_time_notice = null;
         try {
             content_first_time_notice = new ConnectTaskHttpGet().execute(httpPost).get();
@@ -82,9 +84,7 @@ public class DrawerClickFragment extends Fragment {
         }
         con = new Connections();
         parsing = new Parsing();
-        ArrayList<NoticeObject> noticelist = parsing.parseNotices(content_first_time_notice);
-        Log.e("...",noticelist.get(0).getSubject());
-        Log.e("...",noticelist.get(1).getSubject());
+        noticelist = parsing.parseNotices(content_first_time_notice);
 
         final RecyclerView rv = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView = rv;
@@ -97,7 +97,7 @@ public class DrawerClickFragment extends Fragment {
         mRecyclerView.setOnScrollListener(new RecyclerScrollListener());
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());//mAdapter, mRecyclerView));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
         return view;
     }
 
@@ -171,13 +171,16 @@ public class DrawerClickFragment extends Fragment {
                 public void run() {
                     String result=null;
                     try {
+                        httpPost = new HttpGet(MainActivity.UrlOfNotice+
+                                "list_notices/new/"+category+
+                                "/All/1/20/"+noticelist.get(noticelist.size()-1).getId());
                         result = new ConnectTaskHttpGet().execute(httpPost).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-                    ArrayList<NoticeObject> noticelist = parsing.parseNotices(result);
+                    noticelist.addAll(parsing.parseNotices(result));
                     mAdapter.setData(noticelist);
                     mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
                     mRecyclerView.setAdapter(mAdapter);

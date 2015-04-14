@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
+/*
  * Created by manohar on 21/2/15.
  */
 public class ConnectTaskHttpGet extends AsyncTask<HttpGet, Void, String> {
