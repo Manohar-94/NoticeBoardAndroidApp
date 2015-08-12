@@ -48,8 +48,8 @@ public class MainActivity extends ActionBarActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    public static String UrlOfNotice = "http://172.25.55.156/notices/";
-    public static String UrlOfLogin = "http://172.25.55.156:8080/peoplesearch/";
+    public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
+    public static String UrlOfLogin = "https://channeli.in/peoplesearch/"; //http://172.25.55.156:8080/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
 
     HttpGet httpPost1;
