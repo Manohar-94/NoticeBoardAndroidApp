@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,7 +25,8 @@ import connections.ConnectTaskHttpPost;
 
 public class SplashScreen  extends Activity{
     public static final String PREFS_NAME = "MyPrefsFile";
-    public String msg, session_key;
+    private static int SPLASH_TIME_OUT = 2000;
+    public String msg, flag, session_key;
 
     SharedPreferences settings;
     HttpPost httpPost;
@@ -37,32 +39,50 @@ public class SplashScreen  extends Activity{
 
         settings = getSharedPreferences(PREFS_NAME,0);
         session_key = settings.getString("session_key","");
-        msg = settings.getString("msg","NO");
-        if(msg.equals("YES")){
-            try{
-                //httpClient = new DefaultHttpClient();
-                httpPost = new HttpPost(MainActivity.UrlOfLogin+"check_session/");
-                List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-                namevaluepair.add(new BasicNameValuePair("session_key",session_key));
-                httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                result = new ConnectTaskHttpPost().execute(httpPost).get();
-                JSONObject json = new JSONObject(result);
-                msg = json.getString("msg");
-                Toast toast = Toast.makeText(getApplicationContext(),result, Toast.LENGTH_LONG);
-                toast.show();
-                if(msg.equals("YES")){
+        flag = settings.getString("flag","NO");
+        if(flag.equals("YES")){
 
-                    Intent intent = new Intent(this,MainActivity.class);
-                    startActivity(intent);
-                }
-            }
-            catch(Exception e){
-                Log.e("log_tag", e.toString());
-            }
+                //httpClient = new DefaultHttpClient();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // This method will be executed once the timer is over
+                        // Start your app main activity
+                        try {
+                            httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
+                            List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
+                            namevaluepair.add(new BasicNameValuePair("session_key", session_key));
+                            httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
+                            result = new ConnectTaskHttpPost().execute(httpPost).get();
+                            JSONObject json = new JSONObject(result);
+                            msg = json.getString("msg");
+                            Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
+                            toast.show();
+                            if (msg.equals("YES")) {
+
+                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                            finish();
+                        }
+                        catch(Exception e){
+                            Log.e("log_tag", e.toString());
+                            Toast toast = Toast.makeText(getApplicationContext(),"sorry! could not login. Try again later!", Toast.LENGTH_LONG);
+                            toast.show();
+                            finish();
+                        }
+                    }
+                }, SPLASH_TIME_OUT);
         }
         else {
             Intent intent = new Intent(this, LoginPage.class);
             startActivity(intent);
         }
+    }
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+        System.exit(0);
+        //TODO close the app
     }
 }

@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:layout="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_list_item"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight">
 
+    <!--<include
+        android:id="@+id/navigation_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/navigation_profile"/>-->
     <TextView
         android:id="@+id/drawer_list_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white">
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="30dp">
         <!--android:textSize="?android:attr/textAppearanceLarge"-->
         </TextView>
 </RelativeLayout>
-    <!--android:layout_marginTop="@dimen/list_margin_top"
-        android:layout_marginLeft="@dimen/list_margin_left"
-        android:layout_marginRight="@dimen/list_margin_left"-->
-
-    <!--
-    <ImageView
-        android:id="@+id/profile_pic"
-        android:layout_marginLeft="@dimen/list_margin_left"
-        android:layout_width="60dp"
-        android:layout_height="match_parent" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/profile_pic"/> -->

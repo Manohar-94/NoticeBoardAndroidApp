@@ -1,15 +1,15 @@
-package objects_and_parsing;
+package objects;
 
 /*
 Created by manohar on 4/2/15.
  */
 public class NoticeObject {
-    int id;
-    String subject;
-    String datetime_modified;
-    String username;
-    String category;
-    String main_category;
+    public int id;
+    public String subject;
+    public String datetime_modified;
+    public String username;
+    public String category;
+    public String main_category;
     public NoticeObject(){};
     public NoticeObject(int id,String subject, String datetime_modified,String username,
                         String category, String main_category){

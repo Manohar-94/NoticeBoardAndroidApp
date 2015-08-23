@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import in.channeli.noticeboard.R;
-import objects_and_parsing.NoticeInfo;
+import objects.NoticeInfo;
 
 /*
  Created by manohar on 12/3/15.

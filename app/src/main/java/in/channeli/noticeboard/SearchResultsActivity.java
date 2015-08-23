@@ -1,7 +1,5 @@
 package in.channeli.noticeboard;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +19,8 @@ import java.util.concurrent.ExecutionException;
 
 import adapters.CustomSearchAdapter;
 import connections.ConnectTaskHttpGet;
-import objects_and_parsing.NoticeInfo;
-import objects_and_parsing.Parsing;
+import objects.NoticeInfo;
+import utilities.Parsing;
 
 /*
  Created by manohar on 9/3/15.

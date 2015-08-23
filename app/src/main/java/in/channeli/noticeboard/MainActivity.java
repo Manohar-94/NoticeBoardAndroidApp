@@ -13,9 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,13 +32,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import adapters.CustomDrawerListAdapter;
-import adapters.CustomListAdapter;
 import connections.ConnectTaskHttpGet;
 import connections.ConnectTaskHttpPost;
-import connections.Connections;
-import objects_and_parsing.Categories;
-import objects_and_parsing.NoticeObject;
-import objects_and_parsing.Parsing;
+import objects.Category;
+import utilities.Parsing;
+import objects.User;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -54,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
 
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
-    ArrayList<Categories> categories;
+    ArrayList<Category> categories;
     String session_key;
     Parsing parsing;
 
@@ -74,16 +69,17 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        changingFragment("all");
+
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
 
         parsing = new Parsing();
-
-        categories = parsing.parse_constants(constants);
+        categories = new ArrayList<Category>();
+        categories.add(new Category(true));
+        categories.addAll(parsing.parse_constants(constants));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
+        changingFragment("All");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -102,13 +98,16 @@ public class MainActivity extends ActionBarActivity {
                 //getActionBar().setTitle(mDrawerTitle);
             }
         };
-
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+        User user = new User(settings.getString("name",""), settings.getString("info",""),
+                settings.getString("enrollment_no",""));
         mDrawerList.setAdapter(new CustomDrawerListAdapter(this,
-                R.layout.drawerlist_itemview, categories));
+                R.layout.drawerlist_itemview, categories,user));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
@@ -187,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
                     toast.show();
 
                     editor.putString("session_key","");
+                    editor.putString("flag","NO");
                     editor.commit();
                     finish();
                 //}
@@ -222,6 +222,13 @@ public class MainActivity extends ActionBarActivity {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+        System.exit(0);
+        //TODO close the app
     }
 
    /* @Override

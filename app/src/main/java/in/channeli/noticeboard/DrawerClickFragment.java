@@ -3,19 +3,15 @@ package in.channeli.noticeboard;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Outline;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 
 import org.apache.http.client.methods.HttpGet;
 
@@ -25,9 +21,9 @@ import java.util.concurrent.ExecutionException;
 import adapters.CustomListAdapter;
 import connections.ConnectTaskHttpGet;
 import connections.Connections;
-import objects_and_parsing.NoticeInfo;
-import objects_and_parsing.NoticeObject;
-import objects_and_parsing.Parsing;
+import objects.NoticeInfo;
+import objects.NoticeObject;
+import utilities.Parsing;
 
 /*
 Created by manohar on 2/2/15.
@@ -88,7 +84,7 @@ public class DrawerClickFragment extends Fragment {
 
         final RecyclerView rv = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView = rv;
-        mRecyclerView.setHasFixedSize(true);
+        //mRecyclerView.setHasFixedSize(true);
         mAdapter = new CustomListAdapter(noticelist);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
@@ -124,7 +120,19 @@ public class DrawerClickFragment extends Fragment {
                 }
             }
             if(!loading && (totalItemCount - previousTotal)<=(visibleItemCount+visibleThreshold)){
-
+                String result=null;
+                try {
+                    httpPost = new HttpGet(MainActivity.UrlOfNotice+
+                            "list_notices/new/"+category+
+                            "/All/1/20/"+noticelist.size());
+                    result = new ConnectTaskHttpGet().execute(httpPost).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                noticelist.clear();
+                noticelist.addAll(parsing.parseNotices(result));
                 loading = false;
             }
         }
@@ -173,20 +181,22 @@ public class DrawerClickFragment extends Fragment {
                     try {
                         httpPost = new HttpGet(MainActivity.UrlOfNotice+
                                 "list_notices/new/"+category+
-                                "/All/1/20/"+noticelist.get(noticelist.size()-1).getId());
+                                "/All/1/20/0");
                         result = new ConnectTaskHttpGet().execute(httpPost).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
+                    noticelist.clear();
                     noticelist.addAll(parsing.parseNotices(result));
-                    mAdapter.setData(noticelist);
+                    /*mAdapter.setData(noticelist);
                     mAdapter.SetOnItemClickListener(new RecyclerListListener(noticelist));
-                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setAdapter(mAdapter);*/
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
-            },5000);
+            },3000);
 
         }
     }

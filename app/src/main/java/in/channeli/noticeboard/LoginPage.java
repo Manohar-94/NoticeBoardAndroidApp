@@ -153,7 +153,7 @@ public class LoginPage extends Activity{
             editor.putString("info", info);
             editor.putString("enrollment_no", username);
             editor.putString("session_key",session_key);
-            editor.putString("msg", msg);
+            editor.putString("flag", msg);
             editor.commit();
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
@@ -161,6 +161,7 @@ public class LoginPage extends Activity{
         else{
             toast = Toast.makeText(getApplicationContext(),"sorry! could not login. Try again later!", Toast.LENGTH_LONG);
             toast.show();
+            finish();
             //TODO close the app
         }
     }
@@ -199,6 +200,7 @@ public class LoginPage extends Activity{
         editor.putInt("check", 0);
         editor.commit();*/
         super.onBackPressed();
+        finish();
         //TODO close the app
     }
 }
