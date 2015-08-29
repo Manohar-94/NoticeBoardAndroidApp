@@ -27,14 +27,14 @@ import utilities.Parsing;
  */
 public class SearchResultsActivity extends ActionBarActivity {
     String query;
-    SearchView searchView;
+    //SearchView searchView;
     String searchUrl;
     Parsing parsing;
     ArrayList<NoticeInfo> noticelist;
     CustomSearchAdapter customSearchAdapter;
     ListView listView;
-    final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
-    HttpGet httpPost;
+    //final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
+    //HttpGet httpPost;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -83,6 +83,7 @@ public class SearchResultsActivity extends ActionBarActivity {
             public boolean onQueryTextSubmit(String newText)
             {
                 query = newText;
+                query = query.replaceAll(" ","%20");
                 onTextSubmit();
 
                 return true;
@@ -101,6 +102,7 @@ public class SearchResultsActivity extends ActionBarActivity {
 
         if(Intent.ACTION_SEARCH.equals(intent.getAction())){
             query = intent.getStringExtra(SearchManager.QUERY);
+            query = query.replaceAll(" ","%20");
         }
     }
 

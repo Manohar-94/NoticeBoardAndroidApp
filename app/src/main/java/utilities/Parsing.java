@@ -28,14 +28,14 @@ public class Parsing {
     public ArrayList<Category> parse_constants(String constants){
         categorieslist = new ArrayList<>();
         try {
-            Log.e("value of constants",constants);
+            //Log.e("value of constants",constants);
             jsonObject = new JSONObject(constants);
             jsonArray = jsonObject.getJSONArray("order");
             for(int i=0;i<jsonArray.length();i++){
                 categories = new Category(jsonArray.getString(i),
                         jsonObject.getJSONArray(jsonArray.getString(i)));
                 categorieslist.add(categories);
-                Log.e("parsing",jsonArray.getString(i));
+                //Log.e("parsing",jsonArray.getString(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();

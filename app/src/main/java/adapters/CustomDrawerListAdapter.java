@@ -42,7 +42,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
 
     public View getView(int position, View ConvertView, ViewGroup parent){
         View drawerlist_view = null;
-
+        int flag=0;
         try {
             if (categories.get(position).show_profile == false) {
                 Log.e("main category", categories.get(position).main_category);
@@ -50,9 +50,33 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(layout, null, true);
 
+                ImageView imageview = (ImageView) drawerlist_view.findViewById(R.id.drawer_icons);
+                if(categories.get(position).main_category.contains("Authorities")) {
+                    imageview.setImageResource(R.drawable.ic_account_balance_black_24dp);
+                    flag=1;
+                }
+                else if(categories.get(position).main_category.contains("All")) {
+                    imageview.setImageResource(R.drawable.ic_home_black_24dp);
+                    flag=1;
+                }
+                else if(categories.get(position).main_category.contains("Placement")) {
+                    imageview.setImageResource(R.drawable.ic_assignment_ind_black_24dp);
+                    flag=1;
+                }
+                else if(categories.get(position).main_category.contains("Department")) {
+                    imageview.setImageResource(R.drawable.ic_school_black_24dp);
+                    flag=1;
+                }
+                else if(categories.get(position).main_category.contains("profile"))
+                    imageview.setImageResource(R.drawable.ic_person_black_24dp);
+                else if(categories.get(position).main_category.contains("logout"))
+                    imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
                 TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
-                textView.setText(categories.get(position).main_category);
-
+                if(flag != 0) {
+                    textView.setText(categories.get(position).main_category + " notices");
+                }
+                else
+                    textView.setText((categories.get(position)).main_category);
             }
             else{
                 LayoutInflater inflater = (LayoutInflater) context

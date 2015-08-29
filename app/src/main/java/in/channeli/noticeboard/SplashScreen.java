@@ -56,8 +56,8 @@ public class SplashScreen  extends Activity{
                             result = new ConnectTaskHttpPost().execute(httpPost).get();
                             JSONObject json = new JSONObject(result);
                             msg = json.getString("msg");
-                            Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
-                            toast.show();
+                            //Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
+                            //toast.show();
                             if (msg.equals("YES")) {
 
                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);

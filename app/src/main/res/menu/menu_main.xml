@@ -9,14 +9,4 @@
         app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.widget.SearchView"/>
 
-    <item android:id="@+id/profile"
-        android:title="profile"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/logout"
-        android:title="Logout"
-        android:orderInCategory="50"
-        app:showAsAction="never" />
-
-
 </menu>

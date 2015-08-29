@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:layout="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_list_item"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight">
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@color/material_blue_grey_800">
 
-    <!--<include
-        android:id="@+id/navigation_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/navigation_profile"/>-->
+    <ImageView
+        android:id="@+id/drawer_icons"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"/>
+
     <TextView
         android:id="@+id/drawer_list_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:layout_marginLeft="30dp">
-        <!--android:textSize="?android:attr/textAppearanceLarge"-->
+        android:layout_toRightOf="@id/drawer_icons"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp">
         </TextView>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@id/drawer_icons"/>
 </RelativeLayout>

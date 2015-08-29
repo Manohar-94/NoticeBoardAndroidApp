@@ -12,10 +12,14 @@ public class Category {
     public String main_category;
     public ArrayList<String> sub_categories = new ArrayList<>();
     public Boolean show_profile;
-    
+
+    public Category(String mc){
+        this.show_profile = false;
+        main_category = mc;
+    }
     public Category(Boolean show_profile){
         this.show_profile = show_profile;
-        main_category = null;
+        main_category = "null";
     }
 
     public Category(String mc, JSONArray sc){

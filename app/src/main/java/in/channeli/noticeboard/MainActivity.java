@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -61,14 +62,16 @@ public class MainActivity extends ActionBarActivity {
 
         httpPost1 = new HttpGet(UrlOfNotice+"get_constants/");
         String constants = null;
+        AsyncTask<HttpGet, Void, String> mTask;
         try {
-            constants = new ConnectTaskHttpGet().execute(httpPost1).get();
+            mTask = new ConnectTaskHttpGet().execute(httpPost1);
+            constants = mTask.get();
+            mTask.cancel(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
 
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
 
@@ -76,10 +79,13 @@ public class MainActivity extends ActionBarActivity {
         categories = new ArrayList<Category>();
         categories.add(new Category(true));
         categories.addAll(parsing.parse_constants(constants));
-
+        categories.add(new Category(" "));
+        categories.add(new Category("profile"));
+        categories.add(new Category("logout"));
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         changingFragment("All");
+        setTitle("All notices");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -155,45 +161,8 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
-        SharedPreferences.Editor editor = settings.edit();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.profile) {
-            Intent intent = new Intent(this, Profile.class);
-            startActivity(intent);
-            return true;
-        }
         if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        else if(id == R.id.logout){
-            HttpPost httpPost = new HttpPost(
-                    UrlOfLogin+"logout/");
-            session_key = settings.getString("session_key", "");
-            List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-            namevaluepair.add(new BasicNameValuePair("session_key",session_key));
-            try{
-
-                httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                String result = new ConnectTaskHttpPost().execute(httpPost).get();
-                //parsing.parse_constants(result);
-
-                //if(s.msg.equals("OK")){
-                    //Log.e("Log_tag",s.msg);
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "logged out successfully" , Toast.LENGTH_SHORT);
-                    toast.show();
-
-                    editor.putString("session_key","");
-                    editor.putString("flag","NO");
-                    editor.commit();
-                    finish();
-                //}
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
             return true;
         }
 
@@ -203,6 +172,41 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(categories.get(position).main_category.contains("profile")){
+                Intent intent = new Intent(getApplicationContext(), Profile.class);
+                startActivity(intent);
+            }
+            else if(categories.get(position).main_category.contains("logout")){
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+                SharedPreferences.Editor editor = settings.edit();
+                HttpPost httpPost = new HttpPost(
+                        UrlOfLogin+"logout/");
+                session_key = settings.getString("session_key", "");
+                List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
+                namevaluepair.add(new BasicNameValuePair("session_key",session_key));
+                try {
+
+                    httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
+                    String result = new ConnectTaskHttpPost().execute(httpPost).get();
+                    //parsing.parse_constants(result);
+
+                    //if(s.msg.equals("OK")){
+                    //Log.e("Log_tag",s.msg);
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "logged out successfully", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    editor.putString("session_key", "");
+                    editor.putString("flag", "NO");
+                    editor.commit();
+                    finish();
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+            else if(!categories.get(position).main_category.equals(" ") &&
+                    !categories.get(position).main_category.equals("null"))
             selectItem(position);
         }
     }
@@ -210,7 +214,7 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         changingFragment(categories.get(position).main_category);
         mDrawerList.setItemChecked(position,true);
-        setTitle(categories.get(position).main_category);
+        setTitle(categories.get(position).main_category+" notices");
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }

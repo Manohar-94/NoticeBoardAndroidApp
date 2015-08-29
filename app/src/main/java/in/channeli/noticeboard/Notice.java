@@ -6,11 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.Log;
 import android.webkit.WebView;
-import android.widget.TextView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
