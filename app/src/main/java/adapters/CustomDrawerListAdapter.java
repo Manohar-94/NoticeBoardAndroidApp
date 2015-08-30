@@ -6,14 +6,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import connections.ProfilePicDisplay;
+import in.channeli.noticeboard.MainActivity;
 import in.channeli.noticeboard.R;
 import objects.Category;
 import objects.User;
@@ -44,7 +48,8 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
         View drawerlist_view = null;
         int flag=0;
         try {
-            if (categories.get(position).show_profile == false) {
+            if (categories.get(position).show_profile == false &&
+                    categories.get(position).isSpinner == false) {
                 Log.e("main category", categories.get(position).main_category);
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -67,8 +72,6 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                     imageview.setImageResource(R.drawable.ic_school_black_24dp);
                     flag=1;
                 }
-                else if(categories.get(position).main_category.contains("profile"))
-                    imageview.setImageResource(R.drawable.ic_person_black_24dp);
                 else if(categories.get(position).main_category.contains("logout"))
                     imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
                 TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
@@ -78,7 +81,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 else
                     textView.setText((categories.get(position)).main_category);
             }
-            else{
+            else if(categories.get(position).show_profile == true){
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(R.layout.navigation_profile, null, true);
@@ -99,6 +102,34 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 name.setText(user.getName());
                 TextView info = (TextView) drawerlist_view.findViewById(R.id.info);
                 info.setText(user.getInfo());
+            }
+            else{
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                if (inflater != null) drawerlist_view = inflater.inflate(R.layout.spinner_view, null, true);
+                final String[] type = {"current notices","expired notices"};
+                Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
+                CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context,
+                        R.layout.spinner_item, type);
+                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                //        android.R.layout.simple_spinner_item, type);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                s.setAdapter(adapter);
+                s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (position != 0)
+                            MainActivity.NoticeType = "old";
+                        else
+                            MainActivity.NoticeType = "new";
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
         }
             catch(Exception e){

@@ -14,28 +14,29 @@ import java.util.Date;
 
 import in.channeli.noticeboard.R;
 import objects.NoticeInfo;
+import objects.NoticeObject;
 
-/*
- Created by manohar on 12/3/15.
+/**
+ * Created by manohar on 30/8/15.
  */
-public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
+public class CustomFragmentAdapter extends ArrayAdapter<NoticeObject> {
     private Context context;
-    private ArrayList<NoticeInfo> noticeInfoArrayList;
+    private ArrayList<NoticeObject> noticeArrayList;
     private int layout;
 
-    public CustomSearchAdapter(Context context, int layout, ArrayList<NoticeInfo> noticeInfoArrayList){
-        super(context, layout, noticeInfoArrayList);
+    public CustomFragmentAdapter(Context context, int layout, ArrayList<NoticeObject> noticeArrayList){
+        super(context, layout, noticeArrayList);
         this.context = context;
-        this.noticeInfoArrayList = noticeInfoArrayList;
+        this.noticeArrayList = noticeArrayList;
         this.layout = layout;
     }
 
     public int getCount(){
-        return noticeInfoArrayList.size();
+        return noticeArrayList.size();
     }
 
-    public void setData(ArrayList<NoticeInfo> noticeInfoArrayList){
-        this.noticeInfoArrayList = noticeInfoArrayList;
+    public void setData(ArrayList<NoticeObject> noticeArrayList){
+        this.noticeArrayList = noticeArrayList;
     }
 
     public View getView(int position, View ConvertView, ViewGroup parent){
@@ -43,11 +44,11 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View searchlist_view = inflater.inflate(layout, null);
         TextView category = (TextView) searchlist_view.findViewById(R.id.recycler_list_category);
-        category.setText(noticeInfoArrayList.get(position).getCategory());
+        category.setText(noticeArrayList.get(position).getCategory());
         TextView subject = (TextView) searchlist_view.findViewById(R.id.recycler_list_subject);
-        subject.setText(noticeInfoArrayList.get(position).getSubject());
+        subject.setText(noticeArrayList.get(position).getSubject());
         TextView datetime = (TextView) searchlist_view.findViewById(R.id.recycler_list_datetime);
-        String[] date_time = noticeInfoArrayList.get(position).datetime_modified.split("T");
+        String[] date_time = noticeArrayList.get(position).datetime_modified.split("T");
         String date = date_time[0];
         String time = date_time[1];
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,6 +61,7 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         //Log.e("inside search adapter", categories.get(position).main_category);
         return searchlist_view;
     }

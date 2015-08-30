@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="@color/material_blue_grey_800">
+    android:background="#FFFFFF">
 
     <ImageView
         android:id="@+id/drawer_icons"
@@ -17,7 +17,6 @@
         android:id="@+id/drawer_list_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
         android:layout_toRightOf="@id/drawer_icons"
         android:layout_centerVertical="true"
         android:layout_marginLeft="15dp">

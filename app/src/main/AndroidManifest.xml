@@ -27,10 +27,6 @@
                 android:value=".SearchResultsActivity"/>
         </activity>
         <activity
-            android:name=".Profile"
-            android:label="NoticeBoard">
-            </activity>
-        <activity
             android:name=".Notice"
             android:label="NoticeBoard">
             </activity>

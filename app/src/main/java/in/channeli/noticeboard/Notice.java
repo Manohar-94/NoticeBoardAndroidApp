@@ -1,6 +1,8 @@
 package in.channeli.noticeboard;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
@@ -19,10 +21,7 @@ public class Notice extends ActionBarActivity {
         setContentView(R.layout.notice);
         Intent intent = getIntent();
         String result = intent.getStringExtra("noticeinfo");
-        /*TextView textView = (TextView) findViewById(R.id.TextViewForNotice);
-        textView.setText(Html.fromHtml(result));
-        Document doc = Jsoup.parse(result);
-        Elements pdf_url = doc.select("a[href$=.pdf]");*/
+
         if(result.contains("img")  || result.contains("href")) {
             ArrayList<Integer> count = new ArrayList<>();
             StringBuffer stringBuffer = new StringBuffer(result);
@@ -32,8 +31,6 @@ public class Notice extends ActionBarActivity {
                     index = result.indexOf("/media",index + 1)) {
                 count.add(index);
 
-                /*stringBuffer = stringBuffer.insert(separatedInd, add);
-                result = stringBuffer.toString();*/
             }
             int prev = 0;
             for(int i=0; i< count.size(); i++){
@@ -42,9 +39,14 @@ public class Notice extends ActionBarActivity {
             }
             result = stringBuffer.toString();
         }
-        Log.e("notice",result);
+        //Log.e("notice",result);
         WebView webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadData(result, "text/html", "utf-8");
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0, 139, 139)));
+
     }
 }

@@ -3,6 +3,8 @@ package in.channeli.noticeboard;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -27,20 +29,18 @@ import utilities.Parsing;
  */
 public class SearchResultsActivity extends ActionBarActivity {
     String query;
-    //SearchView searchView;
     String searchUrl;
     Parsing parsing;
     ArrayList<NoticeInfo> noticelist;
     CustomSearchAdapter customSearchAdapter;
     ListView listView;
-    //final String noticeurl = MainActivity.UrlOfNotice+"get_notice/";
-    //HttpGet httpPost;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
         parsing = new Parsing();
-        searchUrl = MainActivity.UrlOfNotice+"search/new/All/All/?q=";
+        searchUrl = MainActivity.UrlOfNotice+"search/"+MainActivity.NoticeType+"/All/All/?q=";
         handleIntent(getIntent());
         String url = searchUrl+query;
         Log.e("url sent for searching",url);
@@ -58,9 +58,10 @@ public class SearchResultsActivity extends ActionBarActivity {
         final ListView lv = (ListView) findViewById(R.id.search_list_view);
         listView = lv;
         customSearchAdapter = new CustomSearchAdapter(this,
-                R.layout.recyclerlist_itemview,noticelist);
+                R.layout.list_itemview,noticelist);
         lv.setAdapter(customSearchAdapter);
         lv.setOnItemClickListener(new SearchItemClickListener());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0, 139, 139)));
 
     }
 
@@ -102,6 +103,7 @@ public class SearchResultsActivity extends ActionBarActivity {
 
         if(Intent.ACTION_SEARCH.equals(intent.getAction())){
             query = intent.getStringExtra(SearchManager.QUERY);
+            setTitle(query);
             query = query.replaceAll(" ","%20");
         }
     }

@@ -9,14 +9,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -27,6 +33,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +54,7 @@ public class MainActivity extends ActionBarActivity {
     public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
     public static String UrlOfLogin = "https://channeli.in/peoplesearch/"; //http://172.25.55.156:8080/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
+    public static String NoticeType;
 
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -74,18 +82,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0, 139, 139)));
 
         parsing = new Parsing();
+
         categories = new ArrayList<Category>();
         categories.add(new Category(true));
+        categories.add(new Category());
         categories.addAll(parsing.parse_constants(constants));
         categories.add(new Category(" "));
-        categories.add(new Category("profile"));
         categories.add(new Category("logout"));
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         changingFragment("All");
-        setTitle("All notices");
+        setTitle("All notices new");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -111,8 +124,6 @@ public class MainActivity extends ActionBarActivity {
                 R.layout.drawerlist_itemview, categories,user));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -133,6 +144,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = new DrawerClickFragment();
         Bundle args = new Bundle();
         args.putString("category",category);
+        args.putString("noticetype",NoticeType);
         fragment.setArguments(args);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
@@ -172,11 +184,7 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(categories.get(position).main_category.contains("profile")){
-                Intent intent = new Intent(getApplicationContext(), Profile.class);
-                startActivity(intent);
-            }
-            else if(categories.get(position).main_category.contains("logout")){
+            if(categories.get(position).main_category.contains("logout")){
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
                 SharedPreferences.Editor editor = settings.edit();
                 HttpPost httpPost = new HttpPost(
@@ -188,18 +196,25 @@ public class MainActivity extends ActionBarActivity {
 
                     httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
                     String result = new ConnectTaskHttpPost().execute(httpPost).get();
-                    //parsing.parse_constants(result);
+                    Log.e("...",result);
+                    JSONObject jsonObject = new JSONObject(result);
+                    String msg = jsonObject.getString("msg");
+                    if(msg.equals("OK")) {
+                        //Log.e("Log_tag",s.msg);
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "logged out successfully", Toast.LENGTH_SHORT);
+                        toast.show();
 
-                    //if(s.msg.equals("OK")){
-                    //Log.e("Log_tag",s.msg);
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "logged out successfully", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                    editor.putString("session_key", "");
-                    editor.putString("flag", "NO");
-                    editor.commit();
-                    finish();
+                        editor.putString("session_key", "");
+                        editor.putString("flag", "NO");
+                        editor.commit();
+                        finish();
+                    }
+                    else{
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Failed to logout. Try later.", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -214,7 +229,7 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         changingFragment(categories.get(position).main_category);
         mDrawerList.setItemChecked(position,true);
-        setTitle(categories.get(position).main_category+" notices");
+        setTitle(categories.get(position).main_category+" notices "+NoticeType);
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
@@ -234,9 +249,4 @@ public class MainActivity extends ActionBarActivity {
         System.exit(0);
         //TODO close the app
     }
-
-   /* @Override
-    public boolean onSearchRequested(){
-        return super.onSearchRequested();
-    }*/
 }
