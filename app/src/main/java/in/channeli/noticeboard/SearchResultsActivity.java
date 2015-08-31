@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 
 import org.apache.http.client.methods.HttpGet;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import adapters.CustomSearchAdapter;
+import adapters.CustomSpinnerAdapter;
 import connections.ConnectTaskHttpGet;
 import objects.NoticeInfo;
 import utilities.Parsing;
@@ -34,13 +36,17 @@ public class SearchResultsActivity extends ActionBarActivity {
     ArrayList<NoticeInfo> noticelist;
     CustomSearchAdapter customSearchAdapter;
     ListView listView;
+    String noticetype;
+    String[] type = {"new","old"};
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
         parsing = new Parsing();
-        searchUrl = MainActivity.UrlOfNotice+"search/"+MainActivity.NoticeType+"/All/All/?q=";
+        noticetype = "new";
+        setTitle("search notices");
+        searchUrl = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q=";
         handleIntent(getIntent());
         String url = searchUrl+query;
         Log.e("url sent for searching",url);
@@ -68,6 +74,29 @@ public class SearchResultsActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        Spinner spinner = (Spinner) menu.findItem(R.id.toggle).getActionView();
+        if(null!= spinner) {
+            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this,
+                    R.layout.spinner_item, type);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position != 0)
+                        noticetype = "old";
+                    else
+                        noticetype = "new";
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         if (null != searchView )
@@ -103,28 +132,28 @@ public class SearchResultsActivity extends ActionBarActivity {
 
         if(Intent.ACTION_SEARCH.equals(intent.getAction())){
             query = intent.getStringExtra(SearchManager.QUERY);
-            setTitle(query);
             query = query.replaceAll(" ","%20");
         }
     }
 
     private void onTextSubmit(){
-        String url = searchUrl+query;
+        String url = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q="+query;
         Log.e("url sent for searching",url);
         HttpGet httpGet = new HttpGet(url);
         String result = null;
         try {
             result = new ConnectTaskHttpGet().execute(httpGet).get();
-            noticelist = parsing.parseSearchedNotices(result);
+            noticelist.clear();
+            noticelist.addAll(parsing.parseSearchedNotices(result));
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        customSearchAdapter.setData(noticelist);
-
-        listView.setAdapter(customSearchAdapter);
+        //customSearchAdapter.setData(noticelist);
+        customSearchAdapter.notifyDataSetChanged();
+        //listView.setAdapter(customSearchAdapter);
     }
 
     public class SearchItemClickListener implements ListView.OnItemClickListener{

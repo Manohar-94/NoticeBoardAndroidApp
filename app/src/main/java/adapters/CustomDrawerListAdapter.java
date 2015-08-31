@@ -21,6 +21,7 @@ import in.channeli.noticeboard.MainActivity;
 import in.channeli.noticeboard.R;
 import objects.Category;
 import objects.User;
+import utilities.RoundImageView;
 
 /*
 Created by manohar on 12/2/15.
@@ -85,7 +86,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(R.layout.navigation_profile, null, true);
-                ImageView imageView = (ImageView) drawerlist_view.findViewById(R.id.profile_picture);
+                RoundImageView imageView = (RoundImageView) drawerlist_view.findViewById(R.id.profile_picture);
                 String imageurl = "http://people.iitr.ernet.in/photo/";
                 StringBuilder stringBuilder = new StringBuilder(imageurl+user.getEnrollmentno()+"/");
                 imageurl = stringBuilder.toString();
@@ -111,8 +112,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
                 CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context,
                         R.layout.spinner_item, type);
-                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                //        android.R.layout.simple_spinner_item, type);
+
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 s.setAdapter(adapter);
                 s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

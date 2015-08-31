@@ -6,5 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="drawer_open">Categories</string>
     <string name="drawer_close">drawer closed</string>
-
+    <string-array name="type">
+        <item>new</item>
+        <item>old</item>
+    </string-array>
 </resources>

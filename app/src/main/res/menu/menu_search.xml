@@ -8,5 +8,8 @@
     app:showAsAction="collapseActionView|always"
     app:actionViewClass="android.widget.SearchView">
     </item>
-
+<item android:id="@+id/toggle"
+    android:title="type"
+    app:showAsAction="always"
+    app:actionViewClass="android.widget.Spinner"/>
 </menu>

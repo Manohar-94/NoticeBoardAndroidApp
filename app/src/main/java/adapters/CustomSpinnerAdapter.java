@@ -1,6 +1,8 @@
 package adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,5 +34,11 @@ public class CustomSpinnerAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) view.findViewById(R.id.spinner_text);
         textView.setText(type[position]);
         return view;
+    }
+
+    public View getDropDownView(int position, View convertView, ViewGroup parent){
+        View v = super.getDropDownView(position, convertView, parent);
+        v.setBackgroundResource(android.R.color.white);
+        return v;
     }
 }
