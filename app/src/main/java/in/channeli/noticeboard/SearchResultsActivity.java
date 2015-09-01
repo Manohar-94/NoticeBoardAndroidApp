@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -37,7 +41,7 @@ public class SearchResultsActivity extends ActionBarActivity {
     CustomSearchAdapter customSearchAdapter;
     ListView listView;
     String noticetype;
-    String[] type = {"new","old"};
+    String[] type = {"New","Old"};
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -45,7 +49,7 @@ public class SearchResultsActivity extends ActionBarActivity {
         setContentView(R.layout.search);
         parsing = new Parsing();
         noticetype = "new";
-        setTitle("search notices");
+        setTitle("Searched Results");
         searchUrl = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q=";
         handleIntent(getIntent());
         String url = searchUrl+query;
@@ -67,8 +71,16 @@ public class SearchResultsActivity extends ActionBarActivity {
                 R.layout.list_itemview,noticelist);
         lv.setAdapter(customSearchAdapter);
         lv.setOnItemClickListener(new SearchItemClickListener());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0, 139, 139)));
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(30, 136, 229)));
+        if(Build.VERSION.SDK_INT >= 21){
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.statusbarcolor));
+        }
     }
 
     @Override
@@ -165,5 +177,16 @@ public class SearchResultsActivity extends ActionBarActivity {
             intent.putExtra("noticeinfo", noticelist.get(position).getContent());
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight">
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="#1565c0">
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/drawer_spinner"
         android:layout_gravity="center_horizontal"
-        android:background="#FFFFFF"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"/>
+
 
 </LinearLayout>

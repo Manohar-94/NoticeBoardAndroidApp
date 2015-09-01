@@ -1,6 +1,7 @@
 package adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,8 @@ import in.channeli.noticeboard.R;
 import objects.NoticeInfo;
 import objects.NoticeObject;
 
-/**
- * Created by manohar on 30/8/15.
+/*
+ Created by manohar on 30/8/15.
  */
 public class CustomFragmentAdapter extends ArrayAdapter<NoticeObject> {
     private Context context;
@@ -53,11 +54,17 @@ public class CustomFragmentAdapter extends ArrayAdapter<NoticeObject> {
         String time = date_time[1];
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
+            String currentdate = simpleDateFormat.format(new Date());
+            Date current = simpleDateFormat.parse(currentdate);
             Date strDate = simpleDateFormat.parse(date);
-            if(strDate.equals(System.currentTimeMillis()))
+
+            if(strDate.equals(current)) {
                 datetime.setText(time);
-            else
+            }
+            else {
+                date = new SimpleDateFormat("dd-MMM-yyyy").format(strDate);
                 datetime.setText(date);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

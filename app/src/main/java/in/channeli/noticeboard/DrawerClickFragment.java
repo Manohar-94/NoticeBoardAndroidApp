@@ -3,6 +3,7 @@ package in.channeli.noticeboard;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -100,6 +101,8 @@ public class DrawerClickFragment extends Fragment {
             }
         });
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(
+                Color.RED, Color.BLUE, Color.BLACK);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
         return view;
     }

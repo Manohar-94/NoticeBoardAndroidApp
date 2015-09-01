@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="statusbarcolor" type="color">#1565c0</item>
+    <item name="loginpagecolor" type="color">#90caf9</item>
+</resources>

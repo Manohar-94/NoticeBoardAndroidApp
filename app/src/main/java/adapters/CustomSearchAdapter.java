@@ -52,11 +52,17 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
         String time = date_time[1];
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
+            String currentdate = simpleDateFormat.format(new Date());
+            Date current = simpleDateFormat.parse(currentdate);
             Date strDate = simpleDateFormat.parse(date);
-            if(strDate.equals(System.currentTimeMillis()))
+
+            if(strDate.equals(current)) {
                 datetime.setText(time);
-            else
+            }
+            else {
+                date = new SimpleDateFormat("dd-MMM-yyyy").format(strDate);
                 datetime.setText(date);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

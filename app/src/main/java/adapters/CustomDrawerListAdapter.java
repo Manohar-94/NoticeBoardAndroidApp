@@ -43,15 +43,13 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
 
     public int getCount(){return categories.size();}
 
-    //public void setData(ArrayList<Categories> categories){this.categories = categories;}
-
     public View getView(int position, View ConvertView, ViewGroup parent){
         View drawerlist_view = null;
-        int flag=0;
+        //int flag=0;
         try {
             if (categories.get(position).show_profile == false &&
                     categories.get(position).isSpinner == false) {
-                Log.e("main category", categories.get(position).main_category);
+                //Log.e("main category", categories.get(position).main_category);
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(layout, null, true);
@@ -59,28 +57,21 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 ImageView imageview = (ImageView) drawerlist_view.findViewById(R.id.drawer_icons);
                 if(categories.get(position).main_category.contains("Authorities")) {
                     imageview.setImageResource(R.drawable.ic_account_balance_black_24dp);
-                    flag=1;
                 }
                 else if(categories.get(position).main_category.contains("All")) {
                     imageview.setImageResource(R.drawable.ic_home_black_24dp);
-                    flag=1;
                 }
                 else if(categories.get(position).main_category.contains("Placement")) {
                     imageview.setImageResource(R.drawable.ic_assignment_ind_black_24dp);
-                    flag=1;
                 }
                 else if(categories.get(position).main_category.contains("Department")) {
                     imageview.setImageResource(R.drawable.ic_school_black_24dp);
-                    flag=1;
                 }
-                else if(categories.get(position).main_category.contains("logout"))
+                else if(categories.get(position).main_category.contains("Logout")) {
                     imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
-                TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
-                if(flag != 0) {
-                    textView.setText(categories.get(position).main_category + " notices");
                 }
-                else
-                    textView.setText((categories.get(position)).main_category);
+                TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
+                textView.setText((categories.get(position)).main_category);
             }
             else if(categories.get(position).show_profile == true){
                 LayoutInflater inflater = (LayoutInflater) context
@@ -108,7 +99,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(R.layout.spinner_view, null, true);
-                final String[] type = {"current notices","expired notices"};
+                final String[] type = {"Current Notices","Expired Notices"};
                 Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
                 CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context,
                         R.layout.spinner_item, type);
@@ -135,7 +126,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
             catch(Exception e){
                 e.printStackTrace();
             }
-        //Log.e("inside drawer adapter", categories.get(position).main_category);
+
         return drawerlist_view;
     }
 }

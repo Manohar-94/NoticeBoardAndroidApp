@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -84,21 +86,20 @@ public class MainActivity extends ActionBarActivity {
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0, 139, 139)));
-
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(30, 136, 229)));
         parsing = new Parsing();
 
-        categories = new ArrayList<Category>();
+        categories = new ArrayList<>();
         categories.add(new Category(true));
         categories.add(new Category());
         categories.addAll(parsing.parse_constants(constants));
         categories.add(new Category(" "));
-        categories.add(new Category("logout"));
+        categories.add(new Category("Logout"));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         changingFragment("All");
-        setTitle("All notices new");
+        setTitle("All new");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -124,6 +125,12 @@ public class MainActivity extends ActionBarActivity {
                 R.layout.drawerlist_itemview, categories,user));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        if(Build.VERSION.SDK_INT >= 21){
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.statusbarcolor));
+        }
 
     }
 
@@ -184,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(categories.get(position).main_category.contains("logout")){
+            if(categories.get(position).main_category.contains("Logout")){
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
                 SharedPreferences.Editor editor = settings.edit();
                 HttpPost httpPost = new HttpPost(
@@ -229,7 +236,7 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         changingFragment(categories.get(position).main_category);
         mDrawerList.setItemChecked(position,true);
-        setTitle(categories.get(position).main_category+" notices "+NoticeType);
+        setTitle(categories.get(position).main_category+" "+NoticeType);
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
