@@ -1,21 +1,32 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'noticeboardkey'
+            keyPassword 'imglab'
+            storeFile file('android.keystore')
+            storePassword 'imglab'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "in.channeli.noticeboard"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
         }
+    }
+    productFlavors {
     }
 }
 

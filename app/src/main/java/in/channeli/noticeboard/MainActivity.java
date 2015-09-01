@@ -252,7 +252,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onBackPressed(){
         super.onBackPressed();
-        finish();
+        //finish();
         System.exit(0);
         //TODO close the app
     }

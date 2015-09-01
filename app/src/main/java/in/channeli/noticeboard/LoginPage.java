@@ -101,7 +101,7 @@ public class LoginPage extends Activity{
             startActivity(intent);
         }
         else{
-            Toast toast = Toast.makeText(getApplicationContext(),"sorry! could not login. Try again later!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
             toast.show();
             finish();
             //TODO close the app
@@ -123,8 +123,8 @@ public class LoginPage extends Activity{
 
     public void onBackPressed(){
         super.onBackPressed();
-        finish();
         System.exit(0);
+
         //TODO close the app
     }
 }
