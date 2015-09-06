@@ -3,9 +3,13 @@ package in.channeli.noticeboard;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -37,6 +41,10 @@ public class SplashScreen  extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
+        //if(Build.VERSION.SDK_INT >= 21){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //}
         settings = getSharedPreferences(PREFS_NAME,0);
         session_key = settings.getString("session_key","");
         flag = settings.getString("flag","NO");
@@ -62,6 +70,7 @@ public class SplashScreen  extends Activity{
 
                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                             finish();
                         }
@@ -77,6 +86,7 @@ public class SplashScreen  extends Activity{
         else {
             Intent intent = new Intent(this, LoginPage.class);
             startActivity(intent);
+            finish();
         }
     }
     public void onBackPressed(){

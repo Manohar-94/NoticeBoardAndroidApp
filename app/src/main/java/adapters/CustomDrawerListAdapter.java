@@ -2,7 +2,7 @@ package adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +12,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import connections.ProfilePicDisplay;
+import connections.AsyncDrawable;
+import connections.BitmapWorkerTask;
 import in.channeli.noticeboard.MainActivity;
 import in.channeli.noticeboard.R;
 import objects.Category;
@@ -77,23 +77,27 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(R.layout.navigation_profile, null, true);
-                RoundImageView imageView = (RoundImageView) drawerlist_view.findViewById(R.id.profile_picture);
-                String imageurl = "http://people.iitr.ernet.in/photo/";
-                StringBuilder stringBuilder = new StringBuilder(imageurl+user.getEnrollmentno()+"/");
-                imageurl = stringBuilder.toString();
-                try{
-                    Bitmap bitmap = new ProfilePicDisplay().execute(imageurl).get();
-                    imageView.setImageBitmap(bitmap);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
                 TextView name = (TextView) drawerlist_view.findViewById(R.id.name);
                 name.setText(user.getName());
                 TextView info = (TextView) drawerlist_view.findViewById(R.id.info);
                 info.setText(user.getInfo());
+                RoundImageView imageView = (RoundImageView) drawerlist_view.findViewById(R.id.profile_picture);
+                //imageView.setImageResource(R.drawable.profile_photo);
+                String imageurl = "http://people.iitr.ernet.in/photo/";
+                StringBuilder stringBuilder = new StringBuilder(imageurl+user.getEnrollmentno()+"/");
+                imageurl = stringBuilder.toString();
+
+                try{
+                    Bitmap profile_photo = BitmapFactory.decodeResource(context.getResources(), R.drawable.profile_photo);
+                    BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(imageView);
+                    AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), profile_photo, bitmapWorkerTask);
+                    imageView.setImageDrawable(asyncDrawable);
+                    bitmapWorkerTask.execute(imageurl);
+                    //imageView.setImageBitmap(bitmap);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             else{
                 LayoutInflater inflater = (LayoutInflater) context

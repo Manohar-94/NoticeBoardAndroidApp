@@ -99,6 +99,7 @@ public class LoginPage extends Activity{
             editor.commit();
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
+            finish();
         }
         else{
             Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
