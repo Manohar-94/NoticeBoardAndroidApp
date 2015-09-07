@@ -1,5 +1,7 @@
 package connections;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -14,10 +16,31 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import in.channeli.noticeboard.SearchResultsActivity;
+
 /*
  * Created by manohar on 21/2/15.
  */
 public class ConnectTaskHttpGet extends AsyncTask<HttpGet, Void, String> {
+    Context context;
+    ProgressDialog progressDialog;
+    int check;
+    public ConnectTaskHttpGet(){
+        check=0;
+    }
+    public ConnectTaskHttpGet(Context context){
+        this.context = context;
+        check=1;
+    }
+    @Override
+    protected void onPreExecute(){
+        super.onPreExecute();
+        if(check ==1) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+        }
+    }
     @Override
     protected String doInBackground(HttpGet... httpPosts) {
 // TODO Auto-generated method stub
@@ -47,5 +70,13 @@ public class ConnectTaskHttpGet extends AsyncTask<HttpGet, Void, String> {
             Log.e("log_tag", "Error converting result " + e.toString());
         }
         return result;
+    }
+    @Override
+    protected void onPostExecute(String result){
+        super.onPostExecute(result);
+        if(check == 1) {
+            Log.e("Log_tag", "inside onPostExecute");
+            progressDialog.dismiss();
+        }
     }
 }

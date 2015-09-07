@@ -1,5 +1,6 @@
 package in.channeli.noticeboard;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,9 @@ public class SearchResultsActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
+        //ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait...", true);
+        //dialog.setCancelable(false);
+
         parsing = new Parsing();
         noticetype = "new";
         setTitle("Searched Results");
@@ -57,7 +61,7 @@ public class SearchResultsActivity extends ActionBarActivity {
         HttpGet httpGet = new HttpGet(url);
         String result = null;
         try {
-            result = new ConnectTaskHttpGet().execute(httpGet).get();
+            result = new ConnectTaskHttpGet(this).execute(httpGet).get();
             noticelist = parsing.parseSearchedNotices(result);
 
         } catch (InterruptedException e) {
@@ -65,6 +69,7 @@ public class SearchResultsActivity extends ActionBarActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        //dialog.dismiss();
         final ListView lv = (ListView) findViewById(R.id.search_list_view);
         listView = lv;
         customSearchAdapter = new CustomSearchAdapter(this,
@@ -126,8 +131,9 @@ public class SearchResultsActivity extends ActionBarActivity {
             {
                 query = newText;
                 query = query.replaceAll(" ","%20");
+                //ProgressDialog dialog = ProgressDialog.show(SearchResultsActivity.this, "Loading", "Please wait...", true);
                 onTextSubmit();
-
+                //dialog.dismiss();
                 return true;
             }
         };
@@ -152,9 +158,9 @@ public class SearchResultsActivity extends ActionBarActivity {
         String url = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q="+query;
         Log.e("url sent for searching",url);
         HttpGet httpGet = new HttpGet(url);
-        String result = null;
+        String result;
         try {
-            result = new ConnectTaskHttpGet().execute(httpGet).get();
+            result = new ConnectTaskHttpGet(this).execute(httpGet).get();
             noticelist.clear();
             noticelist.addAll(parsing.parseSearchedNotices(result));
 
@@ -163,9 +169,8 @@ public class SearchResultsActivity extends ActionBarActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        //customSearchAdapter.setData(noticelist);
         customSearchAdapter.notifyDataSetChanged();
-        //listView.setAdapter(customSearchAdapter);
+
     }
 
     public class SearchItemClickListener implements ListView.OnItemClickListener{

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.client.methods.HttpGet;
 
@@ -117,16 +118,23 @@ public class DrawerClickFragment extends Fragment {
             httpPost = new HttpGet(url);
             String result = null;
             try {
-                result = new ConnectTaskHttpGet().execute(httpPost).get();
-            } catch (InterruptedException e) {
+                result = new ConnectTaskHttpGet(getActivity()).execute(httpPost).get();
+
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+
             }
-            NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
-            Intent intent = new Intent(getActivity(), Notice.class);
-            intent.putExtra("noticeinfo", noticeInfo.getContent());
-            startActivity(intent);
+            if(!result.equals("")) {
+                NoticeInfo noticeInfo = parsing.parseNoticeInfo(result);
+                Intent intent = new Intent(getActivity(), Notice.class);
+                intent.putExtra("noticeinfo", noticeInfo.getContent());
+                startActivity(intent);
+            }
+            else {
+                Toast toast = Toast.makeText(getActivity(),
+                        "Cannot connect to internet", Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
     }
 

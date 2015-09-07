@@ -38,8 +38,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import adapters.CustomDrawerListAdapter;
 import connections.ConnectTaskHttpGet;
@@ -74,12 +79,16 @@ public class MainActivity extends ActionBarActivity {
         String constants = null;
         AsyncTask<HttpGet, Void, String> mTask;
         try {
+            //ExecutorService executor = Executors.newSingleThreadExecutor();
             mTask = new ConnectTaskHttpGet().execute(httpPost1);
-            constants = mTask.get();
+            //executor.invokeAll(Arrays.asList(new Task()), 10, TimeUnit.MINUTES);
+            constants = mTask.get(4000, TimeUnit.MILLISECONDS);
             mTask.cancel(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
             e.printStackTrace();
         }
 
@@ -99,7 +108,7 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         changingFragment("All");
-        setTitle("All new");
+        setTitle("All New");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -179,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        //int id = item.getItemId();
 
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
@@ -236,7 +245,8 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         changingFragment(categories.get(position).main_category);
         mDrawerList.setItemChecked(position,true);
-        setTitle(categories.get(position).main_category+" "+NoticeType);
+        setTitle(categories.get(position).main_category+" "
+                +Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1));
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
@@ -252,11 +262,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onBackPressed(){
         super.onBackPressed();
-        //finish();
-        /*Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);*/
+
         System.exit(0);
         //TODO close the app
     }

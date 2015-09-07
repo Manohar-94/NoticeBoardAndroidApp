@@ -3,6 +3,8 @@ package adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import connections.AsyncDrawable;
 import connections.BitmapWorkerTask;
+import connections.TaskCanceler;
 import in.channeli.noticeboard.MainActivity;
 import in.channeli.noticeboard.R;
 import objects.Category;
@@ -88,12 +92,17 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 imageurl = stringBuilder.toString();
 
                 try{
+                    Handler handler = new Handler(Looper.getMainLooper());
                     Bitmap profile_photo = BitmapFactory.decodeResource(context.getResources(), R.drawable.profile_photo);
                     BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(imageView);
+                    TaskCanceler taskCanceler = new TaskCanceler(bitmapWorkerTask);
+                    handler.postDelayed(taskCanceler, 4*1000);
                     AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), profile_photo, bitmapWorkerTask);
                     imageView.setImageDrawable(asyncDrawable);
                     bitmapWorkerTask.execute(imageurl);
-                    //imageView.setImageBitmap(bitmap);
+                    if(taskCanceler != null && handler != null) {
+                        handler.removeCallbacks(taskCanceler);
+                    }
                 }
                 catch (Exception e) {
                     e.printStackTrace();
