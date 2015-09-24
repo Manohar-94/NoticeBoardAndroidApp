@@ -46,6 +46,8 @@ public class Notice extends ActionBarActivity {
         //Log.e("notice",result);
         WebView webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setSupportZoom(true);
         webView.loadData(result, "text/html", "utf-8");
 
         getSupportActionBar().setHomeButtonEnabled(true);

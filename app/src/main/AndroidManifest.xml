@@ -39,6 +39,11 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
+        <service
+            android:name="connections.ProfilePicService"
+            android:exported="false">
+
+        </service>
     </application>
 
 </manifest>

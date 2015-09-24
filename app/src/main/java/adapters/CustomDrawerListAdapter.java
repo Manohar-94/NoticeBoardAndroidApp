@@ -1,10 +1,11 @@
 package adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +16,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
-import connections.AsyncDrawable;
-import connections.BitmapWorkerTask;
-import connections.TaskCanceler;
+import connections.ProfilePicService;
 import in.channeli.noticeboard.MainActivity;
 import in.channeli.noticeboard.R;
 import objects.Category;
 import objects.User;
+import utilities.DownloadResultReceiver;
 import utilities.RoundImageView;
 
 /*
@@ -36,6 +34,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
     private final ArrayList<Category> categories;
     private final int layout;
     private User user;
+    DownloadResultReceiver resultReceiver;
 
     public CustomDrawerListAdapter(Context context, int layout, ArrayList<Category> categories, User user){
         super(context, layout, categories);
@@ -85,14 +84,13 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 name.setText(user.getName());
                 TextView info = (TextView) drawerlist_view.findViewById(R.id.info);
                 info.setText(user.getInfo());
-                RoundImageView imageView = (RoundImageView) drawerlist_view.findViewById(R.id.profile_picture);
-                //imageView.setImageResource(R.drawable.profile_photo);
+                final RoundImageView imageView = (RoundImageView) drawerlist_view.findViewById(R.id.profile_picture);
                 String imageurl = "http://people.iitr.ernet.in/photo/";
                 StringBuilder stringBuilder = new StringBuilder(imageurl+user.getEnrollmentno()+"/");
                 imageurl = stringBuilder.toString();
-
+                imageView.setImageResource(R.drawable.profile_photo);
                 try{
-                    Handler handler = new Handler(Looper.getMainLooper());
+                   /* Handler handler = new Handler(Looper.getMainLooper());
                     Bitmap profile_photo = BitmapFactory.decodeResource(context.getResources(), R.drawable.profile_photo);
                     BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(imageView);
                     TaskCanceler taskCanceler = new TaskCanceler(bitmapWorkerTask);
@@ -102,7 +100,28 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                     bitmapWorkerTask.execute(imageurl);
                     if(taskCanceler != null && handler != null) {
                         handler.removeCallbacks(taskCanceler);
-                    }
+                    }*/
+                    resultReceiver = new DownloadResultReceiver(new Handler());
+                    resultReceiver.setReceiver(new DownloadResultReceiver.Receiver() {
+                        @Override
+                        public void onReceiveResult(int resultCode, Bundle resultData) {
+                            try{
+                                Bitmap bitmap = resultData.getParcelable("imagebitmap");
+
+                                imageView.setImageBitmap(bitmap);
+
+                            }
+                            catch(Exception e){
+                                e.printStackTrace();
+
+                            }
+                        }
+                    });
+                    Intent intent = new Intent(Intent.ACTION_SYNC, null, context,
+                            ProfilePicService.class);
+                    intent.putExtra("receiver", resultReceiver);
+                    intent.putExtra("imageurl", imageurl);
+                    context.startService(intent);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
