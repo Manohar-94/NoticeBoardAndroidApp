@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -56,7 +57,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(layout, null, true);
-
+                TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
                 ImageView imageview = (ImageView) drawerlist_view.findViewById(R.id.drawer_icons);
                 if(categories.get(position).main_category.contains("Authorities")) {
                     imageview.setImageResource(R.drawable.ic_account_balance_black_24dp);
@@ -73,7 +74,15 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 else if(categories.get(position).main_category.contains("Logout")) {
                     imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
                 }
-                TextView textView = (TextView) drawerlist_view.findViewById(R.id.drawer_list_text);
+                else if(categories.get(position).main_category.equals("space")){
+                    Space space = (Space) drawerlist_view.findViewById(R.id.line);
+                    space.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.INVISIBLE);
+                    imageview.setVisibility(View.INVISIBLE);
+                    space = (Space) drawerlist_view.findViewById(R.id.extra_space);
+                    space.setVisibility(View.INVISIBLE);
+                }
+
                 textView.setText((categories.get(position)).main_category);
             }
             else if(categories.get(position).show_profile == true){
@@ -90,17 +99,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 imageurl = stringBuilder.toString();
                 imageView.setImageResource(R.drawable.profile_photo);
                 try{
-                   /* Handler handler = new Handler(Looper.getMainLooper());
-                    Bitmap profile_photo = BitmapFactory.decodeResource(context.getResources(), R.drawable.profile_photo);
-                    BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(imageView);
-                    TaskCanceler taskCanceler = new TaskCanceler(bitmapWorkerTask);
-                    handler.postDelayed(taskCanceler, 4*1000);
-                    AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), profile_photo, bitmapWorkerTask);
-                    imageView.setImageDrawable(asyncDrawable);
-                    bitmapWorkerTask.execute(imageurl);
-                    if(taskCanceler != null && handler != null) {
-                        handler.removeCallbacks(taskCanceler);
-                    }*/
+
                     resultReceiver = new DownloadResultReceiver(new Handler());
                     resultReceiver.setReceiver(new DownloadResultReceiver.Receiver() {
                         @Override

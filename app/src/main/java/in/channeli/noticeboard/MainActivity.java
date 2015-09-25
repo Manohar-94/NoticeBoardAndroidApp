@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
         categories.add(new Category(true));
         categories.add(new Category());
         categories.addAll(parsing.parse_constants(constants));
-        categories.add(new Category(" "));
+        categories.add(new Category("space"));
         categories.add(new Category("Logout"));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -139,6 +139,7 @@ public class MainActivity extends ActionBarActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(getResources().getColor(R.color.statusbarcolor));
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
 
     }
@@ -236,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
                     e.printStackTrace();
                 }
             }
-            else if(!categories.get(position).main_category.equals(" ") &&
+            else if(!categories.get(position).main_category.equals("space") &&
                     !categories.get(position).main_category.equals("null"))
             selectItem(position);
         }

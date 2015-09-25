@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -78,14 +79,14 @@ public class DrawerClickFragment extends Fragment {
                 R.layout.list_itemview,noticelist);
         lv.setAdapter(customFragmentAdapter);
         lv.setOnItemClickListener(new ListViewItemClickListener());
-        lv.setOnScrollListener(new ListViewScrollListener(2){
+        lv.setOnScrollListener(new ListViewScrollListener(2) {
             @Override
-            public void loadMore(int page, int totalItemsCount){
-                String result=null;
+            public void loadMore(int page, int totalItemsCount) {
+                String result = null;
                 try {
-                    httpPost = new HttpGet(MainActivity.UrlOfNotice+
-                            "list_notices/"+noticetype+"/"+category+
-                            "/All/1/20/"+noticelist.get(totalItemsCount-1).getId());
+                    httpPost = new HttpGet(MainActivity.UrlOfNotice +
+                            "list_notices/" + noticetype + "/" + category +
+                            "/All/1/20/" + noticelist.get(totalItemsCount - 1).getId());
                     mTask = new ConnectTaskHttpGet().execute(httpPost);
                     result = mTask.get();
                     mTask.cancel(true);
@@ -105,6 +106,7 @@ public class DrawerClickFragment extends Fragment {
         swipeRefreshLayout.setColorSchemeColors(
                 Color.RED, Color.BLUE, Color.BLACK);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
+
         return view;
     }
 

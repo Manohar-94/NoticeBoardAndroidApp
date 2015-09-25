@@ -1,6 +1,7 @@
 package adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        //Log.e("inside search adapter", categories.get(position).main_category);
+
         return searchlist_view;
     }
 }

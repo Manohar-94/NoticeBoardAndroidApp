@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +29,9 @@ import java.util.concurrent.ExecutionException;
 import adapters.CustomSearchAdapter;
 import adapters.CustomSpinnerAdapter;
 import connections.ConnectTaskHttpGet;
+import connections.SearchService;
 import objects.NoticeInfo;
+import utilities.DownloadResultReceiver;
 import utilities.Parsing;
 
 /*
@@ -40,16 +43,18 @@ public class SearchResultsActivity extends ActionBarActivity {
     Parsing parsing;
     ArrayList<NoticeInfo> noticelist;
     CustomSearchAdapter customSearchAdapter;
-    ListView listView;
+    ProgressDialog dialog;
+
     String noticetype;
     String[] type = {"New","Old"};
+    DownloadResultReceiver resultReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
-        //ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait...", true);
-        //dialog.setCancelable(false);
+        dialog = ProgressDialog.show(this, "Loading", "Please wait...", true);
+        dialog.setCancelable(false);
 
         parsing = new Parsing();
         noticetype = "new";
@@ -57,25 +62,45 @@ public class SearchResultsActivity extends ActionBarActivity {
         searchUrl = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q=";
         handleIntent(getIntent());
         String url = searchUrl+query;
-        Log.e("url sent for searching",url);
-        HttpGet httpGet = new HttpGet(url);
-        String result = null;
-        try {
-            result = new ConnectTaskHttpGet(this).execute(httpGet).get();
-            noticelist = parsing.parseSearchedNotices(result);
+        final ListView lv = (ListView) findViewById(R.id.search_list_view);
+        //Log.e("url sent for searching",url);
+        //HttpGet httpGet = new HttpGet(url);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        try {
+            //result = new ConnectTaskHttpGet(this).execute(httpGet).get();
+            resultReceiver = new DownloadResultReceiver(new Handler());
+            resultReceiver.setReceiver(new DownloadResultReceiver.Receiver() {
+                @Override
+                public void onReceiveResult(int resultCode, Bundle resultData) {
+                    try{
+                        String result = resultData.getString("result");
+                        noticelist = parsing.parseSearchedNotices(result);
+
+                        if(noticelist != null) {
+                            customSearchAdapter = new CustomSearchAdapter(getApplicationContext(),
+                                    R.layout.list_itemview, noticelist);
+
+                            lv.setAdapter(customSearchAdapter);
+                            lv.setOnItemClickListener(new SearchItemClickListener());
+                        }
+                        dialog.dismiss();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+
+                    }
+                }
+            });
+            Intent intent = new Intent(Intent.ACTION_SYNC, null, this,
+                    SearchService.class);
+            intent.putExtra("receiver", resultReceiver);
+            intent.putExtra("url", url);
+            startService(intent);
+
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //dialog.dismiss();
-        final ListView lv = (ListView) findViewById(R.id.search_list_view);
-        listView = lv;
-        customSearchAdapter = new CustomSearchAdapter(this,
-                R.layout.list_itemview,noticelist);
-        lv.setAdapter(customSearchAdapter);
-        lv.setOnItemClickListener(new SearchItemClickListener());
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -155,11 +180,42 @@ public class SearchResultsActivity extends ActionBarActivity {
     }
 
     private void onTextSubmit(){
+        dialog = ProgressDialog.show(this, "Loading", "Please wait...", true);
+        dialog.setCancelable(false);
+
         String url = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q="+query;
         Log.e("url sent for searching",url);
-        HttpGet httpGet = new HttpGet(url);
+        //HttpGet httpGet = new HttpGet(url);
         String result;
         try {
+            //result = new ConnectTaskHttpGet(this).execute(httpGet).get();
+            resultReceiver = new DownloadResultReceiver(new Handler());
+            resultReceiver.setReceiver(new DownloadResultReceiver.Receiver() {
+                @Override
+                public void onReceiveResult(int resultCode, Bundle resultData) {
+                    try{
+                        String result = resultData.getString("result");
+                        noticelist.clear();
+                        noticelist.addAll(parsing.parseSearchedNotices(result));
+                        customSearchAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+
+                    }
+                }
+            });
+            Intent intent = new Intent(Intent.ACTION_SYNC, null, this,
+                    SearchService.class);
+            intent.putExtra("receiver", resultReceiver);
+            intent.putExtra("url", url);
+            startService(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       /* try {
             result = new ConnectTaskHttpGet(this).execute(httpGet).get();
             noticelist.clear();
             noticelist.addAll(parsing.parseSearchedNotices(result));
@@ -168,8 +224,8 @@ public class SearchResultsActivity extends ActionBarActivity {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
-        }
-        customSearchAdapter.notifyDataSetChanged();
+        }*/
+
 
     }
 

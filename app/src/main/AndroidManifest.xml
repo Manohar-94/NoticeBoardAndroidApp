@@ -9,7 +9,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".SplashScreen"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden">
             <meta-data android:name="android.app.default_searchable"
                 android:value=".SearchResultsActivity"/>
         </activity>
@@ -42,8 +43,12 @@
         <service
             android:name="connections.ProfilePicService"
             android:exported="false">
-
         </service>
+        <service
+            android:name="connections.SearchService"
+            android:exported="false">
+
+            </service>
     </application>
 
 </manifest>
