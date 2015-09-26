@@ -28,12 +28,5 @@
         android:layout_height="20dp"
         android:layout_below="@id/drawer_icons"
         android:id="@+id/extra_space"/>
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_below="@id/extra_space"
-        android:id="@+id/line"
-        android:background="#000000">
 
-        </Space>
 </RelativeLayout>

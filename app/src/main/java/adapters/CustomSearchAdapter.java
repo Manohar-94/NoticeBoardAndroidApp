@@ -49,21 +49,25 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
         subject.setText(noticeInfoArrayList.get(position).getSubject());
         TextView datetime = (TextView) searchlist_view.findViewById(R.id.recycler_list_datetime);
         String[] date_time = noticeInfoArrayList.get(position).datetime_modified.split("T");
-        String date = date_time[0];
-        String time = date_time[1];
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            String currentdate = simpleDateFormat.format(new Date());
-            Date current = simpleDateFormat.parse(currentdate);
-            Date strDate = simpleDateFormat.parse(date);
 
-            if(strDate.equals(current)) {
-                datetime.setText(time);
+        try {
+            if(date_time.length != 0) {
+                String date = date_time[0];
+                String time = date_time[1];
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String currentdate = simpleDateFormat.format(new Date());
+                Date current = simpleDateFormat.parse(currentdate);
+                Date strDate = simpleDateFormat.parse(date);
+
+                if (strDate.equals(current)) {
+                    datetime.setText(time);
+                } else {
+                    date = new SimpleDateFormat("dd-MMM-yyyy").format(strDate);
+                    datetime.setText(date);
+                }
             }
-            else {
-                date = new SimpleDateFormat("dd-MMM-yyyy").format(strDate);
-                datetime.setText(date);
-            }
+            else
+                datetime.setText("");
         } catch (ParseException e) {
             e.printStackTrace();
         }

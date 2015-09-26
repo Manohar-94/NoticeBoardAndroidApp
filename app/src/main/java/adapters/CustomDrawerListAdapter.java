@@ -51,8 +51,9 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
         View drawerlist_view = null;
         //int flag=0;
         try {
-            if (categories.get(position).show_profile == false &&
-                    categories.get(position).isSpinner == false) {
+            if (!categories.get(position).show_profile &&
+                    !categories.get(position).isSpinner &&
+                    !categories.get(position).main_category.equals("space")) {
                 //Log.e("main category", categories.get(position).main_category);
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -74,16 +75,19 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 else if(categories.get(position).main_category.contains("Logout")) {
                     imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
                 }
-                else if(categories.get(position).main_category.equals("space")){
-                    Space space = (Space) drawerlist_view.findViewById(R.id.line);
-                    space.setVisibility(View.VISIBLE);
+
+
+                textView.setText((categories.get(position)).main_category);
+            }
+            else if(categories.get(position).main_category.equals("space")){
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                drawerlist_view = inflater.inflate(R.layout.line_space,null, true);
+                    /*space.setVisibility(View.VISIBLE);
                     textView.setVisibility(View.INVISIBLE);
                     imageview.setVisibility(View.INVISIBLE);
                     space = (Space) drawerlist_view.findViewById(R.id.extra_space);
-                    space.setVisibility(View.INVISIBLE);
-                }
-
-                textView.setText((categories.get(position)).main_category);
+                    space.setVisibility(View.INVISIBLE);*/
             }
             else if(categories.get(position).show_profile == true){
                 LayoutInflater inflater = (LayoutInflater) context
@@ -130,20 +134,28 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (inflater != null) drawerlist_view = inflater.inflate(R.layout.spinner_view, null, true);
-                final String[] type = {"Current Notices","Expired Notices"};
-                Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
-                CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context,
-                        R.layout.spinner_item, type);
+                CustomSpinnerAdapter adapter;
+                if(MainActivity.NoticeType.equals("new")) {
+                    final String[] type = {"Current Notices", "Expired Notices"};
+                    adapter = new CustomSpinnerAdapter(context,
+                            R.layout.spinner_item, type);
+                }
+                else{
+                    final String[] type = {"Expired Notices", "Current Notices"};
+                    adapter = new CustomSpinnerAdapter(context,
+                            R.layout.spinner_item, type);
+                }
 
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
                 s.setAdapter(adapter);
                 s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (position != 0)
+                        if (position != 0 && MainActivity.NoticeType.equals("new"))
                             MainActivity.NoticeType = "old";
-                        else
+                        else if(position != 0)
                             MainActivity.NoticeType = "new";
                     }
 

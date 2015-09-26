@@ -76,6 +76,8 @@ public class SearchResultsActivity extends ActionBarActivity {
                         String result = resultData.getString("result");
                         noticelist = parsing.parseSearchedNotices(result);
 
+                        if(noticelist.size() == 0)
+                            noticelist.add(new NoticeInfo());
                         if(noticelist != null) {
                             customSearchAdapter = new CustomSearchAdapter(getApplicationContext(),
                                     R.layout.list_itemview, noticelist);
@@ -215,17 +217,6 @@ public class SearchResultsActivity extends ActionBarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-       /* try {
-            result = new ConnectTaskHttpGet(this).execute(httpGet).get();
-            noticelist.clear();
-            noticelist.addAll(parsing.parseSearchedNotices(result));
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }*/
-
 
     }
 
@@ -233,10 +224,11 @@ public class SearchResultsActivity extends ActionBarActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            Intent intent = new Intent(getApplicationContext(), Notice.class);
-            intent.putExtra("noticeinfo", noticelist.get(position).getContent());
-            startActivity(intent);
+            if(!noticelist.get(position).category.equals("")) {
+                Intent intent = new Intent(getApplicationContext(), Notice.class);
+                intent.putExtra("noticeinfo", noticelist.get(position).getContent());
+                startActivity(intent);
+            }
         }
     }
 

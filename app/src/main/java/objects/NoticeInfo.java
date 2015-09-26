@@ -11,7 +11,11 @@ public class NoticeInfo {
     public String category;
     public String content;
     public String datetime_modified;
-    public NoticeInfo(){};
+    public NoticeInfo(){
+        this.subject="No Notices Available!";
+        this.category="";
+        this.datetime_modified="T";
+    };
     public NoticeInfo(int id, String reference, String subject, String username, String category,
                       String content, String datetime_modified){
         this.id=id;

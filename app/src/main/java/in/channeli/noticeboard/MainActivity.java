@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
     public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
     public static String UrlOfLogin = "https://channeli.in/peoplesearch/"; //http://172.25.55.156:8080/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
-    public static String NoticeType;
+    public static String NoticeType = "new";
 
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -79,9 +79,8 @@ public class MainActivity extends ActionBarActivity {
         String constants = null;
         AsyncTask<HttpGet, Void, String> mTask;
         try {
-            //ExecutorService executor = Executors.newSingleThreadExecutor();
+
             mTask = new ConnectTaskHttpGet().execute(httpPost1);
-            //executor.invokeAll(Arrays.asList(new Task()), 10, TimeUnit.MINUTES);
             constants = mTask.get(4000, TimeUnit.MILLISECONDS);
             mTask.cancel(true);
         } catch (InterruptedException e) {
@@ -101,14 +100,17 @@ public class MainActivity extends ActionBarActivity {
         categories = new ArrayList<>();
         categories.add(new Category(true));
         categories.add(new Category());
+        categories.add(new Category("space"));
         categories.addAll(parsing.parse_constants(constants));
         categories.add(new Category("space"));
         categories.add(new Category("Logout"));
+        categories.add(new Category("space"));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setBackgroundColor(Color.WHITE);
         changingFragment("All");
-        setTitle("All New");
+        setTitle("All Current");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -246,8 +248,12 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
         changingFragment(categories.get(position).main_category);
         mDrawerList.setItemChecked(position,true);
+        if(NoticeType.equals("new"))
         setTitle(categories.get(position).main_category+" "
-                +Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1));
+                +"Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
+        else
+            setTitle(categories.get(position).main_category+" "
+                    +"Expired");
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
