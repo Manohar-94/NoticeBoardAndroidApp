@@ -18,7 +18,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +88,7 @@ public class LoginPage extends Activity{
         }
         catch(Exception e){
             e.printStackTrace();
+
         }
         settings = getSharedPreferences(PREFS_NAME, 0);
         editor = settings.edit();
@@ -102,11 +105,38 @@ public class LoginPage extends Activity{
             finish();
         }
         else{
-            Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
-            toast.show();
+            if(!isOnline()){
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+            else if(msg.contains("NO")){
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Wrong username or password!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+            else{
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Sorry! Could not login! Try again later!", Toast.LENGTH_LONG);
+                toast.show();
+            }
             finish();
             //TODO close the app
         }
+    }
+    public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
     public void parseData(){
         try {

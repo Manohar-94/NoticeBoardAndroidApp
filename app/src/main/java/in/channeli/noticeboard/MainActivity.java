@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -176,13 +178,14 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         //if(null != searchView){
         searchView.setSearchableInfo(searchManager.getSearchableInfo(
-                new ComponentName(this, SearchResultsActivity.class)));
+                    new ComponentName(this, SearchResultsActivity.class)));
         searchView.setIconified(false);
-        //}
+            //}
         return true;
     }
 
@@ -203,59 +206,70 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(categories.get(position).main_category.contains("Logout")){
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
-                SharedPreferences.Editor editor = settings.edit();
-                HttpPost httpPost = new HttpPost(
-                        UrlOfLogin+"logout/");
-                session_key = settings.getString("session_key", "");
-                List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-                namevaluepair.add(new BasicNameValuePair("session_key",session_key));
-                try {
+            if(isOnline()) {
+                if (categories.get(position).main_category.contains("Logout")) {
+                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    HttpPost httpPost = new HttpPost(
+                            UrlOfLogin + "logout/");
+                    session_key = settings.getString("session_key", "");
+                    List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
+                    namevaluepair.add(new BasicNameValuePair("session_key", session_key));
+                    try {
 
-                    httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                    String result = new ConnectTaskHttpPost().execute(httpPost).get();
-                    Log.e("...",result);
-                    JSONObject jsonObject = new JSONObject(result);
-                    String msg = jsonObject.getString("msg");
-                    if(msg.equals("OK")) {
-                        //Log.e("Log_tag",s.msg);
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "logged out successfully", Toast.LENGTH_SHORT);
-                        toast.show();
+                        httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
+                        String result = new ConnectTaskHttpPost().execute(httpPost).get();
+                        Log.e("...", result);
+                        JSONObject jsonObject = new JSONObject(result);
+                        String msg = jsonObject.getString("msg");
+                        if (msg.equals("OK")) {
+                            //Log.e("Log_tag",s.msg);
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    "logged out successfully", Toast.LENGTH_SHORT);
+                            toast.show();
 
-                        editor.putString("session_key", "");
-                        editor.putString("flag", "NO");
-                        editor.commit();
-                        finish();
+                            editor.putString("session_key", "");
+                            editor.putString("flag", "NO");
+                            editor.commit();
+                            finish();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    "Failed to logout. Try later.", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    else{
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "Failed to logout. Try later.", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
+                } else if (!categories.get(position).main_category.equals("space") &&
+                        !categories.get(position).main_category.equals("null"))
+                    selectItem(position);
             }
-            else if(!categories.get(position).main_category.equals("space") &&
-                    !categories.get(position).main_category.equals("null"))
-            selectItem(position);
+            else{
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
     }
 
-    private void selectItem(int position) {
-        changingFragment(categories.get(position).main_category);
-        mDrawerList.setItemChecked(position,true);
-        if(NoticeType.equals("new"))
-        setTitle(categories.get(position).main_category+" "
-                +"Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
-        else
-            setTitle(categories.get(position).main_category+" "
-                    +"Expired");
+    private void selectItem(final int position) {
         mDrawerLayout.closeDrawer(mDrawerList);
+        mDrawerList.setItemChecked(position,true);
 
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                changingFragment(categories.get(position).main_category);
+                if(NoticeType.equals("new"))
+                    setTitle(categories.get(position).main_category+" "
+                            +"Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
+                else
+                    setTitle(categories.get(position).main_category+" "
+                            +"Expired");
+            }
+        };
+        handler.postDelayed(runnable, 250);
     }
 
     public void setTitle(String title){
@@ -266,7 +280,20 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
     }
+    public boolean isOnline() {
 
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
     public void onBackPressed(){
         super.onBackPressed();
 

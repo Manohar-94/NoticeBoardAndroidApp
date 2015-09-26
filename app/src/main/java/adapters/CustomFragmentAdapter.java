@@ -49,7 +49,7 @@ public class CustomFragmentAdapter extends ArrayAdapter<NoticeObject> {
         TextView subject = (TextView) searchlist_view.findViewById(R.id.recycler_list_subject);
         subject.setText(noticeArrayList.get(position).getSubject());
         TextView datetime = (TextView) searchlist_view.findViewById(R.id.recycler_list_datetime);
-        String[] date_time = noticeArrayList.get(position).datetime_modified.split("T");
+        String[] date_time = noticeArrayList.get(position).getDatetime_modified().split("T");
         String date = date_time[0];
         String time = date_time[1];
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");

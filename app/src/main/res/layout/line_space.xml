@@ -8,7 +8,7 @@
         android:layout_height="2dp"
         android:layout_below="@id/extra_space"
         android:id="@+id/line"
-        android:background="#000000">
+        android:background="#1A000000">
 
     </View>
 

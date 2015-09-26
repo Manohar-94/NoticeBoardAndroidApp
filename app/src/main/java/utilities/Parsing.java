@@ -51,12 +51,12 @@ public class Parsing {
             for(int i=0;i< jsonArray.length();i++){
                 jsonObject2 = jsonArray.getJSONObject(i);
                 notice = new NoticeObject();
-                notice.id = jsonObject2.getInt("id");
-                notice.subject = jsonObject2.getString("subject");
-                notice.datetime_modified = jsonObject2.getString("datetime_modified");
-                notice.username = jsonObject2.getString("username");
-                notice.category = jsonObject2.getString("category");
-                notice.main_category = jsonObject2.getString("main_category");
+                notice.setId(jsonObject2.getInt("id"));
+                notice.setSubject(jsonObject2.getString("subject"));
+                notice.setDatetime_modified(jsonObject2.getString("datetime_modified"));
+                notice.setUsername(jsonObject2.getString("username"));
+                notice.setCategory(jsonObject2.getString("category"));
+                notice.setMain_category(jsonObject2.getString("main_category"));
                 noticeslist.add(notice);
             }
         }
@@ -86,12 +86,12 @@ public class Parsing {
         noticeInfo = new NoticeInfo();
         try{
             jsonObject2 = new JSONObject(noticeinfo);
-            noticeInfo.id = jsonObject2.getInt("id");
-            noticeInfo.content = jsonObject2.getString("content");
-            noticeInfo.subject = jsonObject2.getString("subject");
-            noticeInfo.datetime_modified = jsonObject2.getString("datetime_modified");
-            noticeInfo.username = jsonObject2.getString("username");
-            noticeInfo.category = jsonObject2.getString("category");
+            noticeInfo.setId(jsonObject2.getInt("id"));
+            noticeInfo.setContent(jsonObject2.getString("content"));
+            noticeInfo.setSubject(jsonObject2.getString("subject"));
+            noticeInfo.setDatetime_modified(jsonObject2.getString("datetime_modified"));
+            noticeInfo.setUsername(jsonObject2.getString("username"));
+            noticeInfo.setCategory(jsonObject2.getString("category"));
             }
         catch(JSONException e){
             e.printStackTrace();

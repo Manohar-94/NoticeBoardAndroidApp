@@ -57,7 +57,7 @@ public class DrawerClickFragment extends Fragment {
         category = args.getString("category","All");
         category = category.replaceAll(" ","%20");
         noticetype = args.getString("noticetype","new");
-        httpPost = new HttpGet(MainActivity.UrlOfNotice+"list_notices/"+noticetype+"/"+category+"/All/1/20/0");
+        httpPost = new HttpGet(MainActivity.UrlOfNotice+"list_notices/"+noticetype+"/"+category+"/All/0/20/0");
         String content_first_time_notice = null;
 
         try {
@@ -95,9 +95,7 @@ public class DrawerClickFragment extends Fragment {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                /*Log.e("...",MainActivity.UrlOfNotice+
-                        "list_notices/new/"+category+
-                        "/All/1/20/"+noticelist.get(totalItemsCount-1).getId());*/
+
                 noticelist.addAll(parsing.parseNotices(result));
                 customFragmentAdapter.notifyDataSetChanged();
             }
@@ -190,7 +188,7 @@ public class DrawerClickFragment extends Fragment {
                     try {
                         httpPost = new HttpGet(MainActivity.UrlOfNotice+
                                 "list_notices/"+noticetype+"/"+category+
-                                "/All/1/20/0");
+                                "/All/0/20/0");
                         mTask = new ConnectTaskHttpGet().execute(httpPost);
                         result = mTask.get();
                         mTask.cancel(true);

@@ -20,9 +20,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.apache.http.client.methods.HttpGet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -75,8 +77,12 @@ public class SearchResultsActivity extends ActionBarActivity {
                     try{
                         String result = resultData.getString("result");
                         noticelist = parsing.parseSearchedNotices(result);
-
-                        if(noticelist.size() == 0)
+                        if(!isOnline()){
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                        else if(noticelist.size() == 0)
                             noticelist.add(new NoticeInfo());
                         if(noticelist != null) {
                             customSearchAdapter = new CustomSearchAdapter(getApplicationContext(),
@@ -199,6 +205,13 @@ public class SearchResultsActivity extends ActionBarActivity {
                         String result = resultData.getString("result");
                         noticelist.clear();
                         noticelist.addAll(parsing.parseSearchedNotices(result));
+                        if(!isOnline()){
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                        else if(noticelist.size() == 0)
+                            noticelist.add(new NoticeInfo());
                         customSearchAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
@@ -224,12 +237,26 @@ public class SearchResultsActivity extends ActionBarActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(!noticelist.get(position).category.equals("")) {
+            if(!noticelist.get(position).getCategory().equals("")) {
                 Intent intent = new Intent(getApplicationContext(), Notice.class);
                 intent.putExtra("noticeinfo", noticelist.get(position).getContent());
                 startActivity(intent);
             }
         }
+    }
+    public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 
     @Override

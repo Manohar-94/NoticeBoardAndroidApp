@@ -48,7 +48,7 @@ public class CustomSearchAdapter extends ArrayAdapter<NoticeInfo> {
         TextView subject = (TextView) searchlist_view.findViewById(R.id.recycler_list_subject);
         subject.setText(noticeInfoArrayList.get(position).getSubject());
         TextView datetime = (TextView) searchlist_view.findViewById(R.id.recycler_list_datetime);
-        String[] date_time = noticeInfoArrayList.get(position).datetime_modified.split("T");
+        String[] date_time = noticeInfoArrayList.get(position).getDatetime_modified().split("T");
 
         try {
             if(date_time.length != 0) {
