@@ -40,6 +40,10 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
+        <activity
+            android:name=".Feedback"
+            android:label="NoticeBoard">
+            </activity>
         <service
             android:name="connections.ProfilePicService"
             android:exported="false">

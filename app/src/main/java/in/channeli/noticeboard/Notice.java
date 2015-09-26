@@ -25,10 +25,10 @@ public class Notice extends ActionBarActivity {
         setContentView(R.layout.notice);
         Intent intent = getIntent();
         String result = intent.getStringExtra("noticeinfo");
-
-        if(result.contains("img")  || result.contains("href")) {
+        StringBuffer stringBuffer;
+        if(result.contains("<img")  || result.contains("href")) {
             ArrayList<Integer> count = new ArrayList<>();
-            StringBuffer stringBuffer = new StringBuffer(result);
+            stringBuffer = new StringBuffer(result);
             String add = "https://channeli.in";
             for(int index = result.indexOf("/media");
                     index >= 0;
@@ -41,6 +41,20 @@ public class Notice extends ActionBarActivity {
                 stringBuffer = stringBuffer.insert(prev + count.get(i), add);
                 prev = (i+1)*add.length();
             }
+            result = stringBuffer.toString();
+        }
+        if(result.contains("</a>") && result.contains("<img")){
+            stringBuffer = new StringBuffer(result);
+            String add = "Download here";
+            int index = result.indexOf("<a href");
+            while(result.charAt(index) != '>'){
+                index++;
+            }
+            int startIndex = index+1;
+
+            int endIndex = result.indexOf("</a>");
+            //String toBeReplaced = result.substring(startIndex,endIndex);
+            stringBuffer.replace(startIndex,endIndex, add);
             result = stringBuffer.toString();
         }
         //Log.e("notice",result);

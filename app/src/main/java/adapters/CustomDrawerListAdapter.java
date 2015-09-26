@@ -75,7 +75,9 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 else if(categories.get(position).main_category.contains("Logout")) {
                     imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
                 }
-
+                else if(categories.get(position).main_category.contains("Feedback")){
+                    imageview.setImageResource(R.drawable.ic_info_black_24dp);
+                }
 
                 textView.setText((categories.get(position)).main_category);
             }
@@ -83,11 +85,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 drawerlist_view = inflater.inflate(R.layout.line_space,null, true);
-                    /*space.setVisibility(View.VISIBLE);
-                    textView.setVisibility(View.INVISIBLE);
-                    imageview.setVisibility(View.INVISIBLE);
-                    space = (Space) drawerlist_view.findViewById(R.id.extra_space);
-                    space.setVisibility(View.INVISIBLE);*/
+
             }
             else if(categories.get(position).show_profile == true){
                 LayoutInflater inflater = (LayoutInflater) context

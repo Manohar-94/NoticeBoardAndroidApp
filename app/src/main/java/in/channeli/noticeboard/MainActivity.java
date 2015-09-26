@@ -105,6 +105,7 @@ public class MainActivity extends ActionBarActivity {
         categories.add(new Category("space"));
         categories.addAll(parsing.parse_constants(constants));
         categories.add(new Category("space"));
+        categories.add(new Category("Feedback"));
         categories.add(new Category("Logout"));
         categories.add(new Category("space"));
 
@@ -240,7 +241,12 @@ public class MainActivity extends ActionBarActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (!categories.get(position).main_category.equals("space") &&
+                }
+                else if(categories.get(position).main_category.contains("Feedback")){
+                    Intent intent = new Intent(getApplicationContext(), Feedback.class);
+                    startActivity(intent);
+                }
+                else if (!categories.get(position).main_category.equals("space") &&
                         !categories.get(position).main_category.equals("null"))
                     selectItem(position);
             }
@@ -254,7 +260,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void selectItem(final int position) {
         mDrawerLayout.closeDrawer(mDrawerList);
-        mDrawerList.setItemChecked(position,true);
+        mDrawerList.setItemChecked(position, true);
 
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {

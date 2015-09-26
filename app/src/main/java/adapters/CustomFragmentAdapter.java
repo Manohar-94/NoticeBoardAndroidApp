@@ -36,11 +36,8 @@ public class CustomFragmentAdapter extends ArrayAdapter<NoticeObject> {
         return noticeArrayList.size();
     }
 
-    public void setData(ArrayList<NoticeObject> noticeArrayList){
-        this.noticeArrayList = noticeArrayList;
-    }
-
     public View getView(int position, View ConvertView, ViewGroup parent){
+
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View searchlist_view = inflater.inflate(layout, null);
