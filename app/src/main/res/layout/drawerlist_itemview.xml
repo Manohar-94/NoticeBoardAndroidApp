@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/drawer_icons"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="15dp"/>
 
@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/drawer_icons"
         android:layout_centerVertical="true"
-        android:textSize="16sp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#757575"
         android:layout_marginLeft="15dp">
         </TextView>
 

@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="#1565c0">
+    android:background="#062e3f">
 
     <Spinner
         android:layout_width="match_parent"
