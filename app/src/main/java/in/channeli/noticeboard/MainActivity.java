@@ -27,8 +27,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -61,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
-    public static String UrlOfLogin = "https://channeli.in/peoplesearch/"; //http://172.25.55.156:8080/peoplesearch/";
+    public static String UrlOfLogin = "http://172.25.55.156:8080/peoplesearch/";//"https://channeli.in/peoplesearch/"; //
     private ActionBarDrawerToggle mDrawerToggle;
     public static String NoticeType = "new";
 
@@ -146,7 +148,12 @@ public class MainActivity extends ActionBarActivity {
             window.setStatusBarColor(getResources().getColor(R.color.statusbarcolor));
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
-
+        /*View view = this.getCurrentFocus();
+        if(view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }*/
     }
 
     @Override
@@ -266,6 +273,7 @@ public class MainActivity extends ActionBarActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+
                 changingFragment(categories.get(position).main_category);
                 if(NoticeType.equals("new"))
                     setTitle(categories.get(position).main_category+" "
@@ -303,7 +311,7 @@ public class MainActivity extends ActionBarActivity {
     public void onBackPressed(){
         super.onBackPressed();
 
-        System.exit(0);
+        //System.exit(0);
         //TODO close the app
     }
 }

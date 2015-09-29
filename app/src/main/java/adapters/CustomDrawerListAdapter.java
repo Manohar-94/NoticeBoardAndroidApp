@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -147,6 +148,7 @@ public class CustomDrawerListAdapter extends ArrayAdapter<Category> {
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 Spinner s = (Spinner) drawerlist_view.findViewById(R.id.drawer_spinner);
                 s.setAdapter(adapter);
+                s.getBackground().setColorFilter(context.getResources().getColor(R.color.spinnerarrow), PorterDuff.Mode.SRC_ATOP);
                 s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override

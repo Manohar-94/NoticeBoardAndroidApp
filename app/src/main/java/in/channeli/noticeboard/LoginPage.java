@@ -1,12 +1,14 @@
 package in.channeli.noticeboard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,7 +35,7 @@ public class LoginPage extends Activity{
     public static final String PREFS_NAME = "MyPrefsFile";
     public String result;
     public int check;
-    public String username="", password="", session_key="", msg="", name, info;
+    public String username="", password="", session_key="", msg="", enrollment_no="", name, info;
     public View view;
 
     HttpPost httpPost;
@@ -62,6 +64,7 @@ public class LoginPage extends Activity{
             public void onClick(View arg0) {
                 try{
                     processData();
+                    //hideKeyboard();
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -72,6 +75,14 @@ public class LoginPage extends Activity{
 
     }
 
+    /*public void hideKeyboard(){
+        if(view != null) {
+            View view = this.getCurrentFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }*/
     public void processData() throws UnsupportedEncodingException {
 
         username = usertext.getText().toString();
@@ -96,7 +107,7 @@ public class LoginPage extends Activity{
         if(msg.equals("YES")){
             editor.putString("name", name);
             editor.putString("info", info);
-            editor.putString("enrollment_no", username);
+            editor.putString("enrollment_no", enrollment_no);
             editor.putString("session_key",session_key);
             editor.putString("flag", msg);
             editor.commit();
@@ -146,6 +157,7 @@ public class LoginPage extends Activity{
             name = json.getString("_name");
             info = json.getString("info");
             session_key = json.getString("session_variable");
+            enrollment_no = json.getString("enrollment_no");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -154,7 +166,7 @@ public class LoginPage extends Activity{
 
     public void onBackPressed(){
         super.onBackPressed();
-        System.exit(0);
+        //System.exit(0);
 
         //TODO close the app
     }

@@ -15,8 +15,8 @@ android {
         applicationId "in.channeli.noticeboard"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
         signingConfig signingConfigs.config
     }
     buildTypes {

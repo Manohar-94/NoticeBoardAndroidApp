@@ -2,4 +2,5 @@
 <resources>
     <item name="statusbarcolor" type="color">#1565c0</item>
     <item name="loginpagecolor" type="color">#90caf9</item>
+    <item name="spinnerarrow" type="color">#ffffff</item>
 </resources>

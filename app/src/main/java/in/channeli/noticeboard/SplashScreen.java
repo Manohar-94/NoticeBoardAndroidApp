@@ -92,7 +92,7 @@ public class SplashScreen  extends Activity{
     public void onBackPressed(){
         super.onBackPressed();
         finish();
-        System.exit(0);
+        //System.exit(0);
         //TODO close the app
     }
 }
