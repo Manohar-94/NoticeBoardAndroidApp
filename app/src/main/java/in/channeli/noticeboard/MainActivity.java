@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -65,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
     public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
     public static String UrlOfLogin = "https://channeli.in/peoplesearch/";//"http://172.25.55.156:8080/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
-    public static String NoticeType = "new";
+    public static String NoticeType = "new", MainCategory = "All";
 
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -250,7 +251,8 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }
                 else if(categories.get(position).main_category.contains("Feedback")){
-                    Intent intent = new Intent(getApplicationContext(), Feedback.class);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id=in.channeli.noticeboard"));
                     startActivity(intent);
                 }
                 else if (!categories.get(position).main_category.equals("space") &&
@@ -273,14 +275,14 @@ public class MainActivity extends ActionBarActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-
-                changingFragment(categories.get(position).main_category);
-                if(NoticeType.equals("new"))
-                    setTitle(categories.get(position).main_category+" "
-                            +"Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
-                else
-                    setTitle(categories.get(position).main_category+" "
-                            +"Expired");
+                    MainCategory = categories.get(position).main_category;
+                    changingFragment(MainCategory);
+                    if (NoticeType.equals("new"))
+                        setTitle(categories.get(position).main_category + " "
+                                + "Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
+                    else
+                        setTitle(categories.get(position).main_category + " "
+                                + "Expired");
             }
         };
         handler.postDelayed(runnable, 250);
