@@ -12,4 +12,5 @@
         android:id="@+id/my_list_view">
 
         </ListView>
+
 </android.support.v4.widget.SwipeRefreshLayout>
