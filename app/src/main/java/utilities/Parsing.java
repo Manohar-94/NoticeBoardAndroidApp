@@ -54,7 +54,7 @@ public class Parsing {
                 notice.setId(jsonObject2.getInt("id"));
                 notice.setSubject(jsonObject2.getString("subject"));
                 notice.setDatetime_modified(jsonObject2.getString("datetime_modified"));
-                notice.setUsername(jsonObject2.getString("username"));
+                //notice.setUsername(jsonObject2.getString("username"));
                 notice.setCategory(jsonObject2.getString("category"));
                 notice.setMain_category(jsonObject2.getString("main_category"));
                 noticeslist.add(notice);
@@ -90,7 +90,7 @@ public class Parsing {
             noticeInfo.setContent(jsonObject2.getString("content"));
             noticeInfo.setSubject(jsonObject2.getString("subject"));
             noticeInfo.setDatetime_modified(jsonObject2.getString("datetime_modified"));
-            noticeInfo.setUsername(jsonObject2.getString("username"));
+            //noticeInfo.setUsername(jsonObject2.getString("username"));
             noticeInfo.setCategory(jsonObject2.getString("category"));
             }
         catch(JSONException e){
