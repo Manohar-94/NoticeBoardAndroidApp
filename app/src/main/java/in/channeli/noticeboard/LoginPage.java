@@ -118,17 +118,17 @@ public class LoginPage extends Activity{
         else{
             if(!isOnline()){
                 Toast toast = Toast.makeText(getApplicationContext(),
-                        "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_LONG);
+                        "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_SHORT);
                 toast.show();
             }
             else if(msg.contains("NO")){
                 Toast toast = Toast.makeText(getApplicationContext(),
-                        "Wrong username or password!", Toast.LENGTH_LONG);
+                        "Wrong username or password!", Toast.LENGTH_SHORT);
                 toast.show();
             }
             else{
                 Toast toast = Toast.makeText(getApplicationContext(),
-                        "Sorry! Could not login! Try again later!", Toast.LENGTH_LONG);
+                        "Sorry! Could not login! Try again later!", Toast.LENGTH_SHORT);
                 toast.show();
             }
             finish();

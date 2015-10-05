@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,26 +58,34 @@ public class SplashScreen  extends Activity{
                         // This method will be executed once the timer is over
                         // Start your app main activity
                         try {
-                            httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
-                            List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-                            namevaluepair.add(new BasicNameValuePair("session_key", session_key));
-                            httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                            result = new ConnectTaskHttpPost().execute(httpPost).get();
-                            JSONObject json = new JSONObject(result);
-                            msg = json.getString("msg");
-                            //Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
-                            //toast.show();
-                            if (msg.equals("YES")) {
+                            if(isOnline()) {
+                                httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
+                                List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
+                                namevaluepair.add(new BasicNameValuePair("session_key", session_key));
+                                httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
+                                result = new ConnectTaskHttpPost().execute(httpPost).get();
+                                JSONObject json = new JSONObject(result);
+                                msg = json.getString("msg");
+                                //Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
+                                //toast.show();
+                                if (msg.equals("YES")) {
 
-                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                startActivity(intent);
+                                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                                 finish();
                             }
-                            finish();
+                            else{
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "Sorry! Could not connect. Check the internet connection!", Toast.LENGTH_SHORT);
+                                toast.show();
+                                finish();
+                            }
                         }
                         catch(Exception e){
                             Log.e("log_tag", e.toString());
-                            Toast toast = Toast.makeText(getApplicationContext(),"sorry! could not login. Try again later!", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
                             toast.show();
                             finish();
                         }
@@ -89,6 +98,21 @@ public class SplashScreen  extends Activity{
             finish();
         }
     }
+    public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
     public void onBackPressed(){
         super.onBackPressed();
         finish();

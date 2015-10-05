@@ -228,7 +228,6 @@ public class MainActivity extends ActionBarActivity {
 
                         httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
                         String result = new ConnectTaskHttpPost().execute(httpPost).get();
-                        Log.e("...", result);
                         JSONObject jsonObject = new JSONObject(result);
                         String msg = jsonObject.getString("msg");
                         if (msg.equals("OK")) {

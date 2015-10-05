@@ -72,7 +72,6 @@ public class DrawerClickFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.e("drawerfragment",content_first_time_notice);
         con = new Connections();
         parsing = new Parsing();
         noticelist = parsing.parseNotices(content_first_time_notice);

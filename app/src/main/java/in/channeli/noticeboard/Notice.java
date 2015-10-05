@@ -26,16 +26,25 @@ public class Notice extends ActionBarActivity {
         Intent intent = getIntent();
         String result = intent.getStringExtra("noticeinfo");
         StringBuffer stringBuffer;
+
         if(result.contains("<img")  || result.contains("href")) {
             ArrayList<Integer> count = new ArrayList<>();
             stringBuffer = new StringBuffer(result);
             String add = "https://channeli.in";
+
             for(int index = result.indexOf("/media");
                     index >= 0;
                     index = result.indexOf("/media",index + 1)) {
                 count.add(index);
 
             }
+            for(int index = result.indexOf("/notices/userfiles");
+                index >= 0;
+                index = result.indexOf("/notices",index + 1)) {
+                count.add(index);
+
+            }
+
             int prev = 0;
             for(int i=0; i< count.size(); i++){
                 stringBuffer = stringBuffer.insert(prev + count.get(i), add);
@@ -61,6 +70,7 @@ public class Notice extends ActionBarActivity {
         WebView webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setSupportZoom(true);
         webView.loadData(result, "text/html", "utf-8");
 
