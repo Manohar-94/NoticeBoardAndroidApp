@@ -194,7 +194,7 @@ public class SearchResultsActivity extends ActionBarActivity {
         String url = MainActivity.UrlOfNotice+"search/"+noticetype+"/All/All/?q="+query;
         Log.e("url sent for searching",url);
         //HttpGet httpGet = new HttpGet(url);
-        String result;
+        //String result;
         try {
             //result = new ConnectTaskHttpGet(this).execute(httpGet).get();
             resultReceiver = new DownloadResultReceiver(new Handler());

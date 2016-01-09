@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import connections.ConnectTaskHttpGet;
 import connections.ConnectTaskHttpPost;
 
 /*
@@ -29,12 +31,13 @@ import connections.ConnectTaskHttpPost;
  */
 
 public class SplashScreen  extends Activity{
-    public static final String PREFS_NAME = "MyPrefsFile";
+    //public static final String PREFS_NAME = "MyPrefsFile";
     private static int SPLASH_TIME_OUT = 2000;
-    public String msg, flag, session_key;
+    public String msg="YES", flag, session_key, CHANNELI_SESSID;
 
     SharedPreferences settings;
-    HttpPost httpPost;
+    //HttpPost httpPost;
+    HttpGet httpGet;
     String result;
 
     @Override
@@ -46,10 +49,12 @@ public class SplashScreen  extends Activity{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //}
-        settings = getSharedPreferences(PREFS_NAME,0);
-        session_key = settings.getString("session_key","");
-        flag = settings.getString("flag","NO");
-        if(flag.equals("YES")){
+        settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+        //session_key = settings.getString("session_key","");
+        CHANNELI_SESSID = settings.getString("CHANNELI_SESSID","");
+        //flag = settings.getString("flag","NO");
+        //if(flag.equals("YES")){
+        if(!CHANNELI_SESSID.equals("")){
 
                 //httpClient = new DefaultHttpClient();
                 new Handler().postDelayed(new Runnable() {
@@ -59,7 +64,7 @@ public class SplashScreen  extends Activity{
                         // Start your app main activity
                         try {
                             if(isOnline()) {
-                                httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
+                                /*httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
                                 List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
                                 namevaluepair.add(new BasicNameValuePair("session_key", session_key));
                                 httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
@@ -74,7 +79,19 @@ public class SplashScreen  extends Activity{
                                     startActivity(intent);
                                     finish();
                                 }
-                                finish();
+                                finish();*/
+                                httpGet = new HttpGet(MainActivity.UrlOfPeopleSearch+"return_details/");
+                                httpGet.setHeader("Cookie","csrftoken="+settings.getString("csrftoken",""));
+                                httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
+                                httpGet.setHeader("Cookie","CHANNELI_SESSID="+settings.getString("CHANNELI_SESSID",""));
+                                result = new ConnectTaskHttpGet().execute(httpGet).get();
+                                JSONObject json = new JSONObject(result);
+                                msg = json.getString("msg");
+                                if (msg.equals("NO")){
+                                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             }
                             else{
                                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -85,8 +102,10 @@ public class SplashScreen  extends Activity{
                         }
                         catch(Exception e){
                             Log.e("log_tag", e.toString());
-                            Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
-                            toast.show();
+                            /*Toast toast = Toast.makeText(getApplicationContext(),"Sorry! Could not login. Try again later!", Toast.LENGTH_LONG);
+                            toast.show();*/
+                            Intent intent = new Intent(getApplication(), LoginPage.class);
+                            startActivity(intent);
                             finish();
                         }
                     }

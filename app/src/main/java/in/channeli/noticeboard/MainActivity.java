@@ -63,8 +63,9 @@ public class MainActivity extends ActionBarActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    public static String UrlOfNotice = "https://channeli.in/notices/";//"http://172.25.55.156/notices/";
-    public static String UrlOfLogin = "https://channeli.in/peoplesearch/"; //"http://172.25.55.156:8080/peoplesearch/";
+    public static String UrlOfNotice = "http://people.iitr.ernet.in/notices/";//"http://172.25.55.156/notices/";
+    public static String UrlOfLogin = "http://people.iitr.ernet.in/login/"; //"http://172.25.55.156:8080/peoplesearch/";
+    public static String UrlOfPeopleSearch = "http://people.iitr.ernet.in/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
     public static String NoticeType = "new", MainCategory = "All";
 
@@ -80,7 +81,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+
         httpPost1 = new HttpGet(UrlOfNotice+"get_constants/");
+        httpPost1.setHeader("Cookie","csrftoken="+settings.getString("csrftoken",""));
+        httpPost1.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost1.setHeader("Cookie","CHANNELI_SESSID="+settings.getString("CHANNELI_SESSID",""));
         String constants = null;
         AsyncTask<HttpGet, Void, String> mTask;
         try {
@@ -135,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
                 //getActionBar().setTitle(mDrawerTitle);
             }
         };
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+
         User user = new User(settings.getString("name",""), settings.getString("info",""),
                 settings.getString("enrollment_no",""));
         mDrawerList.setAdapter(new CustomDrawerListAdapter(this,

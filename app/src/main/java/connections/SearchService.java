@@ -2,6 +2,7 @@ package connections;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -16,6 +17,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import in.channeli.noticeboard.MainActivity;
 
 /**
  * Created by manohar on 25/9/15.
@@ -36,6 +39,11 @@ public class SearchService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         HttpGet httpGet = new HttpGet(intent.getStringExtra("url"));
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+
+        httpGet.setHeader("Cookie","csrftoken="+settings.getString("csrftoken",""));
+        httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpGet.setHeader("Cookie","CHANNELI_SESSID="+settings.getString("CHANNELI_SESSID",""));
         InputStream isr = null;
         String result="";
         try{

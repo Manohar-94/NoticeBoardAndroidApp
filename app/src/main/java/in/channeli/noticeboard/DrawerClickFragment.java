@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,6 +52,8 @@ public class DrawerClickFragment extends Fragment {
     ArrayList<NoticeObject> noticelist;
     AsyncTask<HttpGet, Void, String> mTask;
 
+    String csrftoken, CHANNELI_SESSID;
+
     @TargetApi(21)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
@@ -61,6 +64,15 @@ public class DrawerClickFragment extends Fragment {
         category = category.replaceAll(" ","%20");
         noticetype = args.getString("noticetype","new");
         httpPost = new HttpGet(MainActivity.UrlOfNotice+"list_notices/"+noticetype+"/"+category+"/All/0/20/0");
+
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        csrftoken = settings.getString("csrftoken","");
+        CHANNELI_SESSID = settings.getString("CHANNELI_SESSID","");
+
+        httpPost.setHeader("Cookie","csrftoken="+csrftoken);
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("Cookie","CHANNELI_SESSID="+CHANNELI_SESSID);
         String content_first_time_notice = null;
 
         try {
@@ -90,6 +102,9 @@ public class DrawerClickFragment extends Fragment {
                     httpPost = new HttpGet(MainActivity.UrlOfNotice +
                             "list_notices/" + noticetype + "/" + category +
                             "/All/1/20/" + noticelist.get(totalItemsCount - 1).getId());
+                    httpPost.setHeader("Cookie","csrftoken="+csrftoken);
+                    httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+                    httpPost.setHeader("Cookie","CHANNELI_SESSID="+CHANNELI_SESSID);
                     mTask = new ConnectTaskHttpGet().execute(httpPost);
                     result = mTask.get();
                     mTask.cancel(true);
@@ -124,6 +139,9 @@ public class DrawerClickFragment extends Fragment {
             stringBuilder.append(noticeurl+noticelist.get(position).getId());
             String url = stringBuilder.toString();
             httpPost = new HttpGet(url);
+            httpPost.setHeader("Cookie","csrftoken="+csrftoken);
+            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpPost.setHeader("Cookie","CHANNELI_SESSID="+CHANNELI_SESSID);
             String result = null;
             try {
                 result = new ConnectTaskHttpGet(getActivity()).execute(httpPost).get();
@@ -197,6 +215,9 @@ public class DrawerClickFragment extends Fragment {
                         httpPost = new HttpGet(MainActivity.UrlOfNotice+
                                 "list_notices/"+noticetype+"/"+category+
                                 "/All/0/20/0");
+                        httpPost.setHeader("Cookie","csrftoken="+csrftoken);
+                        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+                        httpPost.setHeader("Cookie","CHANNELI_SESSID="+CHANNELI_SESSID);
                         mTask = new ConnectTaskHttpGet().execute(httpPost);
                         result = mTask.get();
                         mTask.cancel(true);
