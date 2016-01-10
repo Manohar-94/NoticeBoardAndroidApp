@@ -29,12 +29,10 @@ public class CookiesHttpPost extends AsyncTask<HttpPost, Void, String[]>{
             for (Cookie cookie: cookies) {
                 if (cookie.getDomain().equals(".iitr.ernet.in") && cookie.getName().equals("CHANNELI_SESSID")){
                     cookie_list[1] = cookie.getValue();
-                    //Log.e("cookie_list1",cookie_list[1]);
 
                 }
                 if (cookie.getDomain().equals(".iitr.ernet.in") && cookie.getName().equals("csrftoken")) {
                     cookie_list[0] = cookie.getValue();
-                    //Log.e("cookie_list2",cookie_list[0]);
                 }
 
             }

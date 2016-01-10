@@ -31,12 +31,10 @@ import connections.ConnectTaskHttpPost;
  */
 
 public class SplashScreen  extends Activity{
-    //public static final String PREFS_NAME = "MyPrefsFile";
     private static int SPLASH_TIME_OUT = 2000;
-    public String msg="YES", flag, session_key, CHANNELI_SESSID;
+    public String msg="YES", CHANNELI_SESSID;
 
     SharedPreferences settings;
-    //HttpPost httpPost;
     HttpGet httpGet;
     String result;
 
@@ -50,13 +48,10 @@ public class SplashScreen  extends Activity{
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //}
         settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
-        //session_key = settings.getString("session_key","");
         CHANNELI_SESSID = settings.getString("CHANNELI_SESSID","");
-        //flag = settings.getString("flag","NO");
-        //if(flag.equals("YES")){
+
         if(!CHANNELI_SESSID.equals("")){
 
-                //httpClient = new DefaultHttpClient();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -64,22 +59,6 @@ public class SplashScreen  extends Activity{
                         // Start your app main activity
                         try {
                             if(isOnline()) {
-                                /*httpPost = new HttpPost(MainActivity.UrlOfLogin + "check_session/");
-                                List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-                                namevaluepair.add(new BasicNameValuePair("session_key", session_key));
-                                httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                                result = new ConnectTaskHttpPost().execute(httpPost).get();
-                                JSONObject json = new JSONObject(result);
-                                msg = json.getString("msg");
-                                //Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
-                                //toast.show();
-                                if (msg.equals("YES")) {
-
-                                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                                finish();*/
                                 httpGet = new HttpGet(MainActivity.UrlOfPeopleSearch+"return_details/");
                                 httpGet.setHeader("Cookie","csrftoken="+settings.getString("csrftoken",""));
                                 httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -90,6 +69,12 @@ public class SplashScreen  extends Activity{
                                 if (msg.equals("NO")){
                                     Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                     startActivity(intent);
+                                    finish();
+                                }
+                                else{
+                                    Toast toast = Toast.makeText(getApplicationContext(),
+                                            "Sorry! Could not login. Try again later!", Toast.LENGTH_SHORT);
+                                    toast.show();
                                     finish();
                                 }
                             }

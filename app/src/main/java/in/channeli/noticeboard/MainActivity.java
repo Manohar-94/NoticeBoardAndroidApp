@@ -63,8 +63,8 @@ public class MainActivity extends ActionBarActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    public static String UrlOfNotice = "http://people.iitr.ernet.in/notices/";//"http://172.25.55.156/notices/";
-    public static String UrlOfLogin = "http://people.iitr.ernet.in/login/"; //"http://172.25.55.156:8080/peoplesearch/";
+    public static String UrlOfNotice = "http://people.iitr.ernet.in/notices/";
+    public static String UrlOfLogin = "http://people.iitr.ernet.in/login/";
     public static String UrlOfPeopleSearch = "http://people.iitr.ernet.in/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
     public static String NoticeType = "new", MainCategory = "All";
@@ -72,7 +72,6 @@ public class MainActivity extends ActionBarActivity {
     HttpGet httpPost1;
     public static final String PREFS_NAME = "MyPrefsFile";
     ArrayList<Category> categories;
-    String session_key;
     Parsing parsing;
 
     @Override
@@ -225,33 +224,21 @@ public class MainActivity extends ActionBarActivity {
                 if (categories.get(position).main_category.contains("Logout")) {
                     SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
-                    HttpPost httpPost = new HttpPost(
-                            UrlOfLogin + "logout/");
-                    session_key = settings.getString("session_key", "");
-                    List<NameValuePair> namevaluepair = new ArrayList<NameValuePair>(1);
-                    namevaluepair.add(new BasicNameValuePair("session_key", session_key));
-                    try {
-
-                        httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
-                        String result = new ConnectTaskHttpPost().execute(httpPost).get();
-                        JSONObject jsonObject = new JSONObject(result);
-                        String msg = jsonObject.getString("msg");
-                        if (msg.equals("OK")) {
-                            //Log.e("Log_tag",s.msg);
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    "logged out successfully", Toast.LENGTH_SHORT);
-                            toast.show();
-
-                            editor.putString("session_key", "");
-                            editor.putString("flag", "NO");
-                            editor.commit();
-                            finish();
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    "Failed to logout. Try later.", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    } catch (Exception e) {
+                    HttpGet httpGet = new HttpGet("http://people.iitr.ernet.in/logout/");
+                    httpGet.setHeader("Cookie","csrftoken="+settings.getString("csrftoken",""));
+                    httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
+                    httpGet.setHeader("Cookie","CHANNELI_SESSID="+settings.getString("CHANNELI_SESSID",""));
+                    try{
+                        new ConnectTaskHttpGet().execute(httpGet);
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "logged out successfully", Toast.LENGTH_SHORT);
+                        toast.show();
+                        editor.putString("CHANNELI_SESSID","");
+                        editor.putString("csrftoken","");
+                        editor.commit();
+                        finish();
+                    }
+                    catch (Exception e){
                         e.printStackTrace();
                     }
                 }
@@ -284,7 +271,7 @@ public class MainActivity extends ActionBarActivity {
                     changingFragment(MainCategory);
                     if (NoticeType.equals("new"))
                         setTitle(categories.get(position).main_category + " "
-                                + "Current");/*Character.toUpperCase(NoticeType.charAt(0))+NoticeType.substring(1)*/
+                                + "Current");
                     else
                         setTitle(categories.get(position).main_category + " "
                                 + "Expired");

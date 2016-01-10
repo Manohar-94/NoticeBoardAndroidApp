@@ -43,9 +43,7 @@ import connections.CookiesHttpPost;
  Created by manohar on 4/2/15.
  */
 public class LoginPage extends Activity{
-    //public static final String PREFS_NAME = "MyPrefsFile";
     public String result;
-    public int check;
     public String username="", password="", session_key="", msg="", enrollment_no="", name, info;
     public View view;
     public String[] cookie_list_new;
@@ -98,8 +96,7 @@ public class LoginPage extends Activity{
 
         username = usertext.getText().toString();
         password = passtext.getText().toString();
-        //httpClient = new DefaultHttpClient();
-        //httpPost = new HttpPost(MainActivity.UrlOfLogin+"channeli_login/");
+
         try{
             HttpGet httpGet = new HttpGet(MainActivity.UrlOfLogin);
             String CSRFTOKEN = new CookiesHttpGet().execute(httpGet).get();
@@ -112,13 +109,11 @@ public class LoginPage extends Activity{
             namevaluepair.add(new BasicNameValuePair("password",password));
             namevaluepair.add(new BasicNameValuePair("csrfmiddlewaretoken",CSRFTOKEN));
             namevaluepair.add(new BasicNameValuePair("remember_me","on"));
+
             httpPost.setEntity(new UrlEncodedFormEntity(namevaluepair));
             httpPost.setHeader("Referer", "http://people.iitr.ernet.in/login/");
-            //httpPost.setHeader("X-CSRFToken", cookie_list[0]);
             httpPost.setHeader("Cookie","csrftoken="+CSRFTOKEN);
             httpPost.setHeader("Accept", "application/xml");
-            //httpPost.setHeader("Content-type", "application/json");
-            //httpPost.setHeader("Content-Type", "multipart/form-data");
             httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
             BasicClientCookie csrf_cookie = new BasicClientCookie("csrftoken", CSRFTOKEN);
@@ -132,10 +127,7 @@ public class LoginPage extends Activity{
 // Bind custom cookie store to the local context
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-            //result = new ConnectTaskHttpPost().execute(httpPost).get();
             cookie_list_new = new CookiesHttpPost().execute(httpPost).get();
-            //Log.e("csrf", cookie_list_new[0]);
-            //Log.e("sessid", cookie_list_new[1]);
 
             HttpGet httpGet1 = new HttpGet(MainActivity.UrlOfPeopleSearch+"return_details/?username="+username);
             httpGet1.setHeader("Cookie","csrftoken="+cookie_list_new[0]);
@@ -156,9 +148,7 @@ public class LoginPage extends Activity{
             editor.putString("name", name);
             editor.putString("info", info);
             editor.putString("enrollment_no", enrollment_no);
-            editor.putString("session_key",session_key);
             editor.putString("flag", msg);
-
             editor.putString("csrftoken",cookie_list_new[0]);
             editor.putString("CHANNELI_SESSID",cookie_list_new[1]);
             editor.commit();
