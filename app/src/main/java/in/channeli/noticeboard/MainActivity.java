@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     public static String UrlOfNotice = "http://people.iitr.ernet.in/notices/";
-    public static String UrlOfLogin = "http://people.iitr.ernet.in/login/";
+    public static String UrlOfLogin = "http://people.iitr.ernet.in/login/?next=/peoplesearch/";
     public static String UrlOfPeopleSearch = "http://people.iitr.ernet.in/peoplesearch/";
     private ActionBarDrawerToggle mDrawerToggle;
     public static String NoticeType = "new", MainCategory = "All";
